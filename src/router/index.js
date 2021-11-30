@@ -64,13 +64,13 @@ export const constantRoutes = [
       {
         path: 'index',
         name: 'Index',
-        component: () => import('@/views/major/major'),
+        component: () => import('@/views/major/Major'),
         meta: { title: '专业管理', icon: 'el-icon-notebook-1' }
       },
       {
         path: 'course',
         name: 'Course',
-        component: () => import('@/views/major/course'),
+        component: () => import('@/views/major/Course'),
         meta: { title: '课程管理', icon: 'el-icon-notebook-1' }
       }
     ]

@@ -88,8 +88,8 @@
           <el-table-column
             label="操作">
             <template slot-scope="scope">
-              <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
-              <el-button type="text" size="small">编辑</el-button>
+              <el-button type="text" size="small">查看</el-button>
+              <el-button type="text" size="small" @click="handlerEdit(scope.row.code)">编辑</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -100,15 +100,24 @@
         <el-pagination
           class="fr pagination-container"
           background
-          layout="prev, pager, next"
+          layout="prev, pager, next, total"
           :total="total"
           :page-size="queryParams.size"
           :current-page="queryParams.current"
           @current-change="handleCurrentChange">
+          <template slot="total">
+            总数
+          </template>
         </el-pagination>
       </el-col>
     </el-row>
-    <major-dialog :visible="dialog.visible" :title="dialog.title"></major-dialog>
+    <major-dialog
+      :visible="dialog.visible"
+      :title="dialog.title"
+      :code = dialog.code
+      @closeDialog="closeDialog"
+      @finishSave="handlerSaveFinish"
+      />
   </div>
 </template>
 
@@ -144,7 +153,8 @@ export default {
       ],
       dialog: {
         visible: false,
-        title: '新增专业'
+        title: '新增专业',
+        code: null
       }
     }
   },
@@ -171,6 +181,17 @@ export default {
     },
     handlerAddMajor() {
       this.dialog.visible = true
+    },
+    handlerEdit(code) {
+      this.dialog.code = code
+      this.dialog.visible = true
+    },
+    closeDialog() {
+      this.dialog.visible = false
+    },
+    handlerSaveFinish() {
+      this.closeDialog()
+      this.getList()
     }
   }
 }

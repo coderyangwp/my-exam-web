@@ -3,12 +3,14 @@
     <el-dialog
       :title="title"
       :visible="visible"
-      >
+      v-if="visible"
+      @close="handlerClose"
+    >
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="专业名称" prop="name">
           <el-input v-model="ruleForm.name"></el-input>
         </el-form-item>
-        <el-form-item label="专业代码" prop="name">
+        <el-form-item label="专业代码" prop="code">
           <el-input v-model="ruleForm.code"></el-input>
         </el-form-item>
         <el-form-item label="专业层次" prop="level">
@@ -32,11 +34,14 @@
   </div>
 </template>
 <script>
+import { addMajor, majorDetail } from '@/api/major'
+
 export default {
   name: 'MajorDialog',
   props: {
     title: null,
-    visible: null
+    visible: null,
+    code: null
   },
   data() {
     return {
@@ -63,19 +68,35 @@ export default {
       }
     }
   },
+  watch: {
+    code() {
+      this.init()
+    }
+  },
   methods: {
+    init() {
+      majorDetail(this.code).then(res => {
+        console.log(res)
+        this.ruleForm = res.data
+      })
+    },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!')
+          addMajor(this.ruleForm).then(response => {
+            this.$emit('finishSave')
+          })
         } else {
           console.log('error submit!!')
-          return false;
+          return false
         }
       })
     },
     resetForm(formName) {
       this.$refs[formName].resetFields()
+    },
+    handlerClose() {
+      this.$emit('closeDialog')
     }
   }
 }

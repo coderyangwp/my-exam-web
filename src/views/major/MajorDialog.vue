@@ -15,14 +15,14 @@
         </el-form-item>
         <el-form-item label="专业层次" prop="level">
           <el-radio-group v-model="ruleForm.level">
-            <el-radio label="5">本科</el-radio>
-            <el-radio label="6">专科</el-radio>
+            <el-radio :label="5">本科</el-radio>
+            <el-radio :label="6">专科</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="专业状态" prop="status">
           <el-radio-group v-model="ruleForm.status">
-            <el-radio label="0">启用</el-radio>
-            <el-radio label="1">不启用</el-radio>
+            <el-radio :label="0">启用</el-radio>
+            <el-radio :label="1">不启用</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item>
@@ -76,7 +76,6 @@ export default {
   methods: {
     init() {
       majorDetail(this.code).then(res => {
-        console.log(res)
         this.ruleForm = res.data
       })
     },
@@ -96,7 +95,14 @@ export default {
       this.$refs[formName].resetFields()
     },
     handlerClose() {
+      this.clearForm()
       this.$emit('closeDialog')
+    },
+    clearForm() {
+      this.ruleForm.code = ''
+      this.ruleForm.name = ''
+      this.ruleForm.level = ''
+      this.ruleForm.status = ''
     }
   }
 }

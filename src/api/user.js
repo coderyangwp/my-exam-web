@@ -1,10 +1,17 @@
 import request from '@/utils/request'
 
-export function login(data) {
+export function captcha() {
   return request({
-    url: '/vue-admin-template/user/login',
+    url: '/captcha',
+    method: 'get'
+  })
+}
+
+export function login(loginDto) {
+  return request({
+    url: '/user/login',
     method: 'post',
-    data
+    data: loginDto
   })
 }
 

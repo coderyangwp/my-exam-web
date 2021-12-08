@@ -9,10 +9,10 @@
           <svg-icon icon-class="user" />
         </span>
         <el-input
-          ref="username"
-          v-model="loginForm.username"
+          ref="account"
+          v-model="loginForm.account"
           placeholder="用户名"
-          name="username"
+          name="account"
           type="text"
           tabindex="1"
           auto-complete="on"
@@ -73,12 +73,12 @@ export default {
     return {
       codeUrl: '',
       loginForm: {
-        username: '',
+        account: '',
         password: '',
         captcha: ''
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', message: '请填写用户名' }],
+        account: [{ required: true, trigger: 'blur', message: '请填写用户名' }],
         password: [{ required: true, trigger: 'blur', message: '请填写密码' }],
         captcha: [{ required: true, trigger: 'blur', message: '请填写验证码' }]
       },
@@ -122,6 +122,7 @@ export default {
             this.$router.push({ path: this.redirect || '/' })
             this.loading = false
           }).catch(() => {
+            this.getCaptcha()
             this.loading = false
           })
         } else {

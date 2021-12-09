@@ -4,7 +4,7 @@
       <div class="title-container">
         <h3 class="title">登录页</h3>
       </div>
-      <el-form-item prop="username">
+      <el-form-item prop="account">
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
@@ -75,7 +75,8 @@ export default {
       loginForm: {
         account: '',
         password: '',
-        captcha: ''
+        captcha: '',
+        uuid: ''
       },
       loginRules: {
         account: [{ required: true, trigger: 'blur', message: '请填写用户名' }],
@@ -102,6 +103,7 @@ export default {
     getCaptcha() {
       captcha().then(res => {
         this.codeUrl = 'data:image/gif;base64,' + res.data.code
+        this.loginForm.uuid = res.data.uuid
       })
     },
     showPwd() {

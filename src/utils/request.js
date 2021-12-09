@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { Notification, MessageBox, Message } from 'element-ui'
 import store from '@/store'
-import { getToken } from '@/utils/auth'
+import { getToken, setToken, TokenKey } from '@/utils/auth'
 import errorCode from '@/utils/errorCode'
 
 axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
@@ -15,10 +15,10 @@ const service = axios.create({
 // request拦截器
 service.interceptors.request.use(config => {
   // 是否需要设置 token
-  /* const isToken = (config.headers || {}).isToken === false
+  const isToken = (config.headers || {}).isToken === false
   if (getToken() && !isToken) {
-    config.headers['Authorization'] = 'Bearer ' + getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
-  }*/
+    config.headers['Authorization'] = 'Bearer' + getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
+  }
   // get请求映射params参数
   if (config.method === 'get' && config.params) {
     let url = config.url + '?'
@@ -53,6 +53,13 @@ service.interceptors.request.use(config => {
 service.interceptors.response.use(res => {
   // 未设置状态码则默认成功状态
   const code = res.data.code || 200
+
+  const token = res.headers[TokenKey]
+  if (token) {
+    console.log('-------------更新token---------------')
+    this.$store.commit('SET_TOKEN', token)
+    setToken(token)
+  }
   // 获取错误信息
   const msg = errorCode[code] || res.data.msg || errorCode['default']
   if (code === 401) {
@@ -62,7 +69,7 @@ service.interceptors.response.use(res => {
       type: 'warning'
     }
     ).then(() => {
-      store.dispatch('LogOut').then(() => {
+      store.dispatch('user/logout').then(() => {
         location.href = '/index'
       })
     }).catch(() => {})

@@ -40,7 +40,7 @@
         </el-select>
       </el-col>
       <el-col :span="2">
-        <el-button type="primary" icon="el-icon-search" size="small" @click="handlerSearch">搜索</el-button>
+        <el-button type="default" icon="el-icon-search" size="small" @click="handlerSearch">搜索</el-button>
       </el-col>
     </el-row>
     <el-row class="search-content">

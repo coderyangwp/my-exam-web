@@ -37,7 +37,7 @@
               <template slot-scope="scope">
                 <el-tag
                   :type="scope.row.tag === 0 ? '正常' : '冻结'"
-                  disable-transitions>{{scope.row.status}}</el-tag>
+                  disable-transitions>{{scope.row.status?'正常':'冻结'}}</el-tag>
               </template>
             </el-table-column>
           </el-table>

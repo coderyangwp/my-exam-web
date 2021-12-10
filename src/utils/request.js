@@ -51,13 +51,13 @@ service.interceptors.request.use(config => {
 
 // 响应拦截器
 service.interceptors.response.use(res => {
+  console.log(res)
   // 未设置状态码则默认成功状态
   const code = res.data.code || 200
 
   const token = res.headers[TokenKey]
   if (token) {
-    console.log('-------------更新token---------------')
-    this.$store.commit('SET_TOKEN', token)
+    store.commit('user/SET_TOKEN', token)
     setToken(token)
   }
   // 获取错误信息

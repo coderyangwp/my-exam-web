@@ -30,9 +30,9 @@ const mutations = {
 const actions = {
   // user login
   login({ commit }, userInfo) {
-    const { account, password, captcha, uuid } = userInfo
+    const { username, password, captcha, uuid } = userInfo
     return new Promise((resolve, reject) => {
-      login({ account, password, captcha, uuid }).then(response => {
+      login({ username, password, captcha, uuid }).then(response => {
         const { data } = response
         commit('SET_TOKEN', data.token)
         setToken(data.token)
@@ -51,8 +51,9 @@ const actions = {
         if (!data) {
           return reject('Verification failed, please Login again.')
         }
-        const { username } = data
-        commit('SET_NAME', username)
+        const avatar = data.avatar === '' ? require('@/assets/image/profile.jpg') : process.env.VUE_APP_BASE_API + data.avatar;
+        commit('SET_NAME', data.username)
+        commit('SET_AVATAR', avatar)
         resolve(data)
       }).catch(error => {
         reject(error)

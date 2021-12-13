@@ -7,9 +7,9 @@
       <el-form-item prop="account">
         <el-input
           ref="account"
-          v-model="loginForm.account"
+          v-model="loginForm.username"
           placeholder="用户名"
-          name="account"
+          name="username"
           type="text"
           tabindex="1"
           auto-complete="on"
@@ -62,13 +62,13 @@ export default {
     return {
       codeUrl: '',
       loginForm: {
-        account: 'user1',
+        username: 'user1',
         password: '123456',
         captcha: '',
         uuid: ''
       },
       loginRules: {
-        account: [{ required: true, trigger: 'blur', message: '请填写用户名' }],
+        username: [{ required: true, trigger: 'blur', message: '请填写用户名' }],
         password: [{ required: true, trigger: 'blur', message: '请填写密码' }],
         captcha: [
           { required: true, trigger: 'blur', message: '请填写验证码' },
@@ -96,16 +96,6 @@ export default {
       captcha().then(res => {
         this.codeUrl = 'data:image/gif;base64,' + res.data.code
         this.loginForm.uuid = res.data.uuid
-      })
-    },
-    showPwd() {
-      if (this.passwordType === 'password') {
-        this.passwordType = ''
-      } else {
-        this.passwordType = 'password'
-      }
-      this.$nextTick(() => {
-        this.$refs.password.focus()
       })
     },
     handleLogin() {

@@ -8,17 +8,24 @@ export function majorList(query) {
   })
 }
 
-export function majorDetail(code) {
+export function majorDetail(id) {
   return request({
-    url: '/major/' + code,
+    url: '/major/' + id,
     method: 'get'
   })
 }
 
 export function addMajor(data) {
-  console.log(data)
   return request({
-    url: '/major/save',
+    url: '/major/add',
+    method: 'post',
+    data: data
+  })
+}
+
+export function updateMajor(data) {
+  return request({
+    url: '/major/update',
     method: 'post',
     data: data
   })

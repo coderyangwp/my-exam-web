@@ -81,15 +81,15 @@
             label="专业状态">
             <template slot-scope="scope">
               <el-tag
-                :type="scope.row.status === 0 ? 'success' : 'danger'"
-                disable-transitions>{{scope.row.status === 0 ? '启用' : '未启用'}}</el-tag>
+                :type="scope.row.status === 0 ? 'danger' : 'success'"
+                disable-transitions>{{scope.row.status === 0 ? '未启用' : '启用'}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column
             label="操作">
             <template slot-scope="scope">
               <el-button type="text" size="small">查看</el-button>
-              <el-button type="text" size="small" @click="handlerEdit(scope.row.code)">编辑</el-button>
+              <el-button type="text" size="small" @click="handlerEdit(scope.row.id)">编辑</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -114,7 +114,7 @@
     <major-dialog
       :visible="dialog.visible"
       :title="dialog.title"
-      :code = dialog.code
+      :id = dialog.id
       @closeDialog="closeDialog"
       @finishSave="handlerSaveFinish"
       />
@@ -153,8 +153,8 @@ export default {
       ],
       dialog: {
         visible: false,
-        title: '新增专业',
-        code: null
+        title: '',
+        id: null
       }
     }
   },
@@ -181,13 +181,16 @@ export default {
     },
     handlerAddMajor() {
       this.dialog.visible = true
+      this.dialog.title = '新增专业'
     },
-    handlerEdit(code) {
-      this.dialog.code = code
+    handlerEdit(id) {
+      this.dialog.id = id
       this.dialog.visible = true
+      this.dialog.title = '修改专业'
     },
     closeDialog() {
       this.dialog.visible = false
+      this.dialog.id = 0
     },
     handlerSaveFinish() {
       this.closeDialog()

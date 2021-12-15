@@ -37,7 +37,7 @@
 </template>
 <script>
 import { addMajor, updateMajor, majorDetail } from '@/api/major'
-import { handlerMessage, handlerNotification } from '@/utils/message'
+import { myNotice } from '@/utils/message'
 
 export default {
   name: 'MajorDialog',
@@ -94,15 +94,15 @@ export default {
         if (valid) {
           if (this.ruleForm.id === 0) {
             addMajor(this.ruleForm).then(response => {
-              handlerMessage()
+              myNotice()
               this.$emit('finishSave')
-              this.clearForm()
+              this.resetForm('ruleForm')
             })
           } else {
             updateMajor(this.ruleForm).then(response => {
-              handlerNotification()
+              myNotice()
               this.$emit('finishSave')
-              this.clearForm()
+              this.resetForm('ruleForm')
             })
           }
         } else {
@@ -115,15 +115,8 @@ export default {
       this.$refs[formName].resetFields()
     },
     handlerClose() {
-      this.clearForm()
+      this.resetForm('ruleForm')
       this.$emit('closeDialog')
-    },
-    clearForm() {
-      this.ruleForm.code = ''
-      this.ruleForm.name = ''
-      this.ruleForm.level = ''
-      this.ruleForm.status = ''
-      this.ruleForm.id = 0
     }
   }
 }

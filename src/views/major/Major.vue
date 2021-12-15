@@ -45,8 +45,10 @@
     </el-row>
     <el-row class="search-content">
       <el-col>
-        <el-button type="primary" icon="el-icon-add" size="small" @click="handlerAddMajor">添加专业</el-button>
-        <el-button type="danger" icon="el-icon-delete" size="small">删除专业</el-button>
+        <el-button-group>
+          <el-button size="small" icon="el-icon-plus" @click="handlerAddMajor">添加专业</el-button>
+          <el-button size="small" icon="el-icon-delete">删除专业</el-button>
+        </el-button-group>
       </el-col>
     </el-row>
     <el-row>

@@ -30,9 +30,9 @@ export function dictDetail(dict_code) {
  * @param dict
  * @returns {AxiosPromise}
  */
-export function addDict(dict) {
+export function saveDict(dict) {
   return request({
-    url: '/dict/add',
+    url: '/dict/save',
     method: 'post',
     data: dict
   })

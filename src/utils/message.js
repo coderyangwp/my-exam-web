@@ -5,7 +5,7 @@ import { Message, Notification } from 'element-ui'
  * @param type 主体样式
  * @param message 文字
  */
-export function handlerMessage(type = 'success', message = '操作成功') {
+export function myMessage(type = 'success', message = '操作成功') {
   Message({
     type,
     message
@@ -18,7 +18,7 @@ export function handlerMessage(type = 'success', message = '操作成功') {
  * @param message 说明文字
  * @param type 主体样式
  */
-export function handlerNotification(title = '提示', message = '操作成功', type = 'success') {
+export function myNotice(title = '提示', message = '操作成功', type = 'success') {
   Notification({
     title,
     message,

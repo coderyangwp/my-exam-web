@@ -1,19 +1,50 @@
 <template>
   <div class="app-container">
     <el-row :gutter="20">
-      <el-col :span="12">
-        <el-row class="dict-button">
-          <el-button size="small" type="primary" icon="el-icon-plus">添加</el-button>
-          <el-button size="small" type="danger" icon="el-icon-delete">删除</el-button>
+      <el-col :span="10">
+        <el-row type="flex" justify="space-between" class="m-b-20">
+          <el-col>
+            <el-button-group>
+              <el-button size="small" icon="el-icon-plus" @click="handlerDictAdd">添加</el-button>
+              <el-button type="small" icon="el-icon-edit" @click="handlerDictUpdate">修改</el-button>
+              <el-button size="small" icon="el-icon-delete" @click="handlerDictDel">删除</el-button>
+            </el-button-group>
+          </el-col>
+          <el-col class="text-r">
+            <el-input
+              v-model="queryParams.name"
+              size="mini"
+              placeholder="请输入字典名称"
+              prefix-icon="el-icon-edit"
+              clearable
+              class="input-w-150 m-r-5"
+            />
+            <el-button
+              size="mini"
+              type="default"
+              icon="el-icon-search"
+              @click="load"
+            >
+              查询
+            </el-button>
+          </el-col>
         </el-row>
         <el-row>
           <el-table
             :data="dict"
+            ref="DictTable"
             style="width: 100%"
             :border="true"
+            :header-cell-style="{'text-align':'center'}"
+            :cell-style="{'text-align':'center'}"
+            size="mini"
             highlight-current-row
             @current-change="handlerSelectRow"
           >
+            <el-table-column
+              type="selection"
+              width="55">
+            </el-table-column>
             <el-table-column
               prop="name"
               label="字典名称"
@@ -23,6 +54,7 @@
             <el-table-column
               prop="code"
               label="字典编码"
+              sortable
               >
             </el-table-column>
             <el-table-column
@@ -60,55 +92,56 @@
         </el-row>
       </el-col>
       <el-col :span="12" v-if="dictChild.length > 0">
-        <el-row class="dict-button">
-          <el-button size="small" type="primary" icon="el-icon-plus">添加</el-button>
-          <el-button size="small" type="danger" icon="el-icon-delete">删除</el-button>
+        <el-row class="m-b-20">
+          <el-button-group>
+            <el-button size="mini" icon="el-icon-plus">添加</el-button>
+            <el-button type="mini" icon="el-icon-edit">修改</el-button>
+            <el-button size="mini" icon="el-icon-delete">删除</el-button>
+          </el-button-group>
         </el-row>
         <el-row>
           <el-table
             :data="dictChild"
+            ref="ChildTable"
             style="width: 100%"
             :border="true"
+            size="mini"
+            :header-cell-style="{'text-align':'center'}"
+            :cell-style="{'text-align':'center'}"
             highlight-current-row
           >
             <el-table-column
+              type="selection"
+              width="55">
+            </el-table-column>
+            <el-table-column
               prop="name"
               label="值"
-              sortable
             >
             </el-table-column>
             <el-table-column
               prop="code"
               label="代码"
+              sortable
             >
             </el-table-column>
           </el-table>
         </el-row>
-        <el-row>
-          <el-col :span="24">
-            <el-pagination
-              class="fr pagination-container"
-              background
-              layout="prev, pager, next, total"
-              :total="total"
-              :page-size="queryParams.size"
-              :current-page="queryParams.current"
-              @current-change="handleCurrentChange">
-              <template slot="total">
-                总数
-              </template>
-            </el-pagination>
-          </el-col>
-        </el-row>
       </el-col>
     </el-row>
+    <dict-dialog :dict="dictDialog" @closeDict="closeDict" />
   </div>
 </template>
 <script>
-import { dictList, dictDetail, addDict, addDictChild } from '@/api/system'
+import { dictList, dictDetail } from '@/api/system'
+import { myMessage } from '@/utils/message'
+import DictDialog from '@/views/system/dict/DictDialog'
 
 export default {
   name: 'Dict',
+  components: {
+    DictDialog
+  },
   data() {
     return {
       dict: [],
@@ -116,20 +149,35 @@ export default {
       total: 0,
       queryParams: {
         current: 1,
-        size: 10
+        size: 10,
+        name: ''
+      },
+      dictDialog: {
+        visible: false,
+        title: '新增字典',
+        id: 0,
+        name: null,
+        code: null,
+        descript: null,
+        status: null
+      },
+      childDialog: {
+        visible: false,
+        title: '新增字典项'
       }
     }
   },
   created() {
-    this.dictList()
+    this.load()
   },
   methods: {
-    dictList() {
+    load() {
       dictList(this.queryParams).then(response => {
         this.dict = response.data.records
         this.total = response.data.total
       })
     },
+    // 获取
     handleCurrentChange(current) {
       this.queryParams.current = current
     },
@@ -139,13 +187,44 @@ export default {
         console.log(res)
         this.dictChild = res.data
       })
+    },
+    // 添加字典
+    handlerDictAdd() {
+      this.dictDialog.visible = true
+      this.dictDialog.title = '添加字典'
+    },
+    // 编辑字典 只能选一条
+    handlerDictUpdate() {
+      let data = this.$refs.DictTable.selection
+      if (data.length !== 1) {
+        myMessage('warning', '请选择字典')
+        return
+      }
+      data = data[0]
+      // 删除多余属性
+      delete data.current
+      delete data.size
+      // 字典数据传递给子组件 不用再去数据库查询
+      this.dictDialog = JSON.parse(JSON.stringify(data))
+      this.dictDialog.visible = true
+      this.dictDialog.title = '编辑字典'
+    },
+    // 删除字典 可多选
+    handlerDictDel() {
+      console.log(1)
+    },
+    // 关闭字典dialog
+    closeDict(reload) {
+      // 将dictDialog的值恢复至初始化
+      this.dictDialog = this.$options.data().dictDialog
+      if (reload) {
+        this.load()
+      }
     }
   }
 }
 </script>
 
 <style scoped>
-  .dict-button, .dict-code-button {
-    padding-bottom: 20px;
-  }
+
 </style>

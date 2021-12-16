@@ -43,10 +43,17 @@ export function saveDict(dict) {
  * @param dictDetail
  * @returns {AxiosPromise}
  */
-export function addDictChild(dictDetail) {
+export function saveDictChild(dictDetail) {
   return request({
-    url: '/dict/addChild',
+    url: '/dict/saveChild',
     method: 'post',
     data: dictDetail
+  })
+}
+
+export function deleteDictChild(ids) {
+  return request({
+    url: '/dict/child/' + ids,
+    method: 'get'
   })
 }

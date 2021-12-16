@@ -51,8 +51,8 @@ const actions = {
         if (!data) {
           return reject('Verification failed, please Login again.')
         }
-        const avatar = data.avatar === '' ? require('@/assets/image/profile.jpg') : process.env.VUE_APP_BASE_API + data.avatar;
-        commit('SET_NAME', data.username)
+        const avatar = data.user.avatar === undefined ? require('@/assets/image/profile.jpg') : process.env.VUE_APP_BASE_API + data.user.avatar;
+        commit('SET_NAME', data.user.userName)
         commit('SET_AVATAR', avatar)
         resolve(data)
       }).catch(error => {

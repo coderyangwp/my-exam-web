@@ -91,13 +91,15 @@
           </el-col>
         </el-row>
       </el-col>
-      <el-col :span="12" v-if="dictChild.length > 0">
-        <el-row class="m-b-20">
-          <el-button-group>
-            <el-button size="mini" icon="el-icon-plus">添加</el-button>
-            <el-button type="mini" icon="el-icon-edit">修改</el-button>
-            <el-button size="mini" icon="el-icon-delete">删除</el-button>
-          </el-button-group>
+      <el-col :span="12">
+        <el-row type="flex" justify="space-between" class="m-b-20">
+          <el-col>
+            <el-button-group>
+              <el-button size="mini" icon="el-icon-plus" :disabled="currentDict==null" @click="handlerChildAdd">添加</el-button>
+              <el-button type="mini" icon="el-icon-edit" @click="handlerChildEdit">修改</el-button>
+              <el-button size="mini" icon="el-icon-delete" @click="handlerChildDel">删除</el-button>
+            </el-button-group>
+          </el-col>
         </el-row>
         <el-row>
           <el-table
@@ -130,17 +132,20 @@
       </el-col>
     </el-row>
     <dict-dialog :dict="dictDialog" @closeDict="closeDict" />
+    <dict-child :child="childDialog" @closeChild="closeChild" />
   </div>
 </template>
 <script>
-import { dictList, dictDetail } from '@/api/system'
+import { dictList, dictDetail, deleteDictChild } from '@/api/system'
 import { myMessage } from '@/utils/message'
 import DictDialog from '@/views/system/dict/DictDialog'
+import DictChild from '@/views/system/dict/DictChild'
 
 export default {
   name: 'Dict',
   components: {
-    DictDialog
+    DictDialog,
+    DictChild
   },
   data() {
     return {
@@ -161,9 +166,14 @@ export default {
         descript: null,
         status: null
       },
+      currentDict: null,
       childDialog: {
         visible: false,
-        title: '新增字典项'
+        title: '新增字典项',
+        id: 0,
+        dictCode: null,
+        name: null,
+        code: null
       }
     }
   },
@@ -183,8 +193,8 @@ export default {
     },
     // 点击字典，查看该字典的子数据
     handlerSelectRow(currentRow) {
+      this.currentDict = currentRow
       dictDetail(currentRow.code).then(res => {
-        console.log(res)
         this.dictChild = res.data
       })
     },
@@ -219,6 +229,49 @@ export default {
       this.dictDialog = this.$options.data().dictDialog
       if (reload) {
         this.load()
+      }
+    },
+    // 添加字典项
+    handlerChildAdd() {
+      this.childDialog.visible = true
+      this.childDialog.title = '新增字典项'
+      this.childDialog.dictCode = this.currentDict.code
+    },
+    // 编辑字典项
+    handlerChildEdit() {
+      let data = this.$refs.ChildTable.selection
+      if (data.length !== 1) {
+        myMessage('warning', '请选择字典项')
+        return
+      }
+      data = data[0]
+      delete data.current
+      delete data.size
+      this.childDialog = JSON.parse(JSON.stringify(data))
+      this.childDialog.visible = true
+      this.childDialog.title = '编辑字典项'
+    },
+    // 删除字典项
+    handlerChildDel() {
+      const data = this.$refs.ChildTable.selection
+      if (data.length === 0) {
+        myMessage('error', '请选择要删除的数据')
+        return
+      }
+      const ids = []
+      data.filter(item => {
+        return ids.push(item.id)
+      })
+      deleteDictChild(ids).then(res => {
+        myMessage()
+        this.handlerSelectRow(this.currentDict)
+      })
+    },
+    // 关闭字典项对话框
+    closeChild(reload) {
+      this.childDialog = this.$options.data().childDialog
+      if (reload) {
+        this.handlerSelectRow(this.currentDict)
       }
     }
   }

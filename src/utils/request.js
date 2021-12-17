@@ -66,8 +66,7 @@ service.interceptors.response.use(res => {
       confirmButtonText: '重新登录',
       cancelButtonText: '取消',
       type: 'warning'
-    }
-    ).then(() => {
+    }).then(() => {
       store.dispatch('user/logout').then(() => {
         location.href = '/index'
       })

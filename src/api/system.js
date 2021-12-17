@@ -51,6 +51,13 @@ export function saveDictChild(dictDetail) {
   })
 }
 
+export function delDict(ids) {
+  return request({
+    url: '/dict/del/' + ids,
+    method: 'get'
+  })
+}
+
 export function deleteDictChild(ids) {
   return request({
     url: '/dict/child/' + ids,

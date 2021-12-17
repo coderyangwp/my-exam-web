@@ -68,7 +68,7 @@
               >
               <template slot-scope="scope">
                 <el-tag
-                  :type="scope.row.tag === 0 ? '正常' : '冻结'"
+                  :type="scope.row.status === 0 ? 'danger' : 'success'"
                   disable-transitions>{{scope.row.status?'正常':'冻结'}}</el-tag>
               </template>
             </el-table-column>
@@ -136,8 +136,8 @@
   </div>
 </template>
 <script>
-import { dictList, dictDetail, deleteDictChild } from '@/api/system'
-import { myMessage } from '@/utils/message'
+import { dictList, dictDetail, delDict, deleteDictChild } from '@/api/system'
+import { myMessage, myConfirm } from '@/utils/message'
 import DictDialog from '@/views/system/dict/DictDialog'
 import DictChild from '@/views/system/dict/DictChild'
 
@@ -193,9 +193,13 @@ export default {
     },
     // 点击字典，查看该字典的子数据
     handlerSelectRow(currentRow) {
+      if (currentRow == null) {
+        this.dictChild = []
+        return
+      }
       this.currentDict = currentRow
       dictDetail(currentRow.code).then(res => {
-        this.dictChild = res.data
+        this.dictChild = res.data.dictDetails
       })
     },
     // 添加字典
@@ -221,15 +225,38 @@ export default {
     },
     // 删除字典 可多选
     handlerDictDel() {
-      console.log(1)
+      const data = this.$refs.DictTable.selection
+      if (data.length === 0) {
+        myMessage('error', '请选择字典')
+        return
+      }
+      myConfirm('确认删除选中字典？').then(() => {
+        const ids = []
+        // 记录code是为了将vuex中的数据删除
+        const codes = []
+        data.filter(item => {
+          ids.push(item.id)
+          codes.push(item.code)
+        })
+        delDict(ids).then(() => {
+          myMessage()
+          // 清空之前选中得字段 防止删除字典后还可添加字典项
+          this.currentDict = null
+          this.load()
+          // 根据code删除vuex中的数据
+          this.$store.commit('dict/DELETE_DICT', codes)
+        })
+      })
     },
     // 关闭字典dialog
     closeDict(reload) {
-      // 将dictDialog的值恢复至初始化
-      this.dictDialog = this.$options.data().dictDialog
       if (reload) {
+        // 新增或修改字典项 获取更新后的值存入vuex中
+        this.$store.dispatch('dict/getDict', this.dictDialog.code)
         this.load()
       }
+      // 将dictDialog的值恢复至初始化
+      this.dictDialog = this.$options.data().dictDialog
     },
     // 添加字典项
     handlerChildAdd() {
@@ -258,21 +285,27 @@ export default {
         myMessage('error', '请选择要删除的数据')
         return
       }
-      const ids = []
-      data.filter(item => {
-        return ids.push(item.id)
-      })
-      deleteDictChild(ids).then(res => {
-        myMessage()
-        this.handlerSelectRow(this.currentDict)
+      myConfirm('确认删除?').then(() => {
+        const ids = []
+        data.filter(item => {
+          return ids.push(item.id)
+        })
+        deleteDictChild(ids).then(res => {
+          myMessage()
+          // 删除vuex中的该字典
+          this.$store.commit('dict/DELETE_ONE_DICT', this.currentDict.code)
+          this.handlerSelectRow(this.currentDict)
+        })
       })
     },
     // 关闭字典项对话框
     closeChild(reload) {
-      this.childDialog = this.$options.data().childDialog
       if (reload) {
         this.handlerSelectRow(this.currentDict)
+        // 新增或修改字典项 获取更新后的值存入vuex中
+        this.$store.dispatch('dict/getDict', this.childDialog.dictCode)
       }
+      this.childDialog = this.$options.data().childDialog
     }
   }
 }

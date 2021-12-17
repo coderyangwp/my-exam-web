@@ -1,4 +1,4 @@
-import { Message, Notification } from 'element-ui'
+import { Message, Notification, MessageBox } from 'element-ui'
 
 /**
  * 封装Message
@@ -23,5 +23,13 @@ export function myNotice(title = '提示', message = '操作成功', type = 'suc
     title,
     message,
     type
+  })
+}
+
+export function myConfirm(content) {
+  return MessageBox.confirm(content, '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
   })
 }

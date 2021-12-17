@@ -57,7 +57,8 @@
           v-loading="loading"
           :data="tableData"
           border
-          style="width: 100%"
+          :header-cell-style="{'text-align':'center'}"
+          :cell-style="{'text-align':'center'}"
           @selection-change="handlerSelection">
           <el-table-column
             type="selection"
@@ -75,16 +76,15 @@
             prop="level"
             label="专业层次">
             <template slot-scope="scope">
-              {{scope.row.level === 5 ? '本科' : '专科'}}
+              <!--{{scope.row.level === 5 ? '本科' : '专科'}}-->
+              <my-dict mode="list" :value="scope.row.level" dictKey="major-level" />
             </template>
           </el-table-column>
           <el-table-column
             prop="level"
             label="专业状态">
             <template slot-scope="scope">
-              <el-tag
-                :type="scope.row.status === 0 ? 'danger' : 'success'"
-                disable-transitions>{{scope.row.status === 0 ? '未启用' : '启用'}}</el-tag>
+              <my-dict mode="list" :value="scope.row.status" dictKey="enable" />
             </template>
           </el-table-column>
           <el-table-column
@@ -126,11 +126,13 @@
 <script>
 import { majorList } from '@/api/major'
 import MajorDialog from '@/views/major/MajorDialog'
+import MyDict from '@/components/Dict/MyDict'
 
 export default {
   name: 'Major',
   components: {
-    MajorDialog
+    MajorDialog,
+    MyDict
   },
   data() {
     return {

@@ -199,7 +199,7 @@ export default {
       }
       this.currentDict = currentRow
       dictDetail(currentRow.code).then(res => {
-        this.dictChild = res.data.dictDetails
+        this.dictChild = res.data.items
       })
     },
     // 添加字典

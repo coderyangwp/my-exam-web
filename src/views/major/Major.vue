@@ -23,9 +23,9 @@
         <el-select v-model="queryParams.level" size="small" placeholder="请选择专业层次">
           <el-option
             v-for="item in level"
-            :key="item.value"
+            :key="item.id"
             :label="item.name"
-            :value="item.value">
+            :value="item.code">
           </el-option>
         </el-select>
       </el-col>
@@ -33,21 +33,22 @@
         <el-select v-model="queryParams.status" size="small" placeholder="请选择专业状态">
           <el-option
             v-for="item in status"
-            :key="item.value"
+            :key="item.id"
             :label="item.name"
-            :value="item.value">
+            :value="item.code">
           </el-option>
         </el-select>
       </el-col>
-      <el-col :span="2">
+      <el-col :span="3">
         <el-button type="default" icon="el-icon-search" size="small" @click="handlerSearch">搜索</el-button>
+        <el-button type="default" size="small" @click="handlerReset">重置</el-button>
       </el-col>
     </el-row>
     <el-row class="search-content">
       <el-col>
         <el-button-group>
           <el-button size="small" icon="el-icon-plus" @click="handlerAddMajor">添加专业</el-button>
-          <el-button size="small" icon="el-icon-delete">删除专业</el-button>
+          <el-button size="small" icon="el-icon-delete" @click="handlerDel">删除专业</el-button>
         </el-button-group>
       </el-col>
     </el-row>
@@ -56,10 +57,10 @@
         <el-table
           v-loading="loading"
           :data="tableData"
+          ref="MajorTable"
           border
-          :header-cell-style="{'text-align':'center'}"
-          :cell-style="{'text-align':'center'}"
-          @selection-change="handlerSelection">
+          style="width: 100%"
+        >
           <el-table-column
             type="selection"
             width="55">
@@ -76,22 +77,23 @@
             prop="level"
             label="专业层次">
             <template slot-scope="scope">
-              <!--{{scope.row.level === 5 ? '本科' : '专科'}}-->
-              <my-dict mode="list" :value="scope.row.level" dictKey="major-level" />
+              {{scope.row.level === 5 ? '本科' : '专科'}}
             </template>
           </el-table-column>
           <el-table-column
             prop="level"
             label="专业状态">
             <template slot-scope="scope">
-              <my-dict mode="list" :value="scope.row.status" dictKey="enable" />
+              <el-tag
+                :type="scope.row.status === 0 ? 'danger' : 'success'"
+                disable-transitions>{{scope.row.status === 0 ? '未启用' : '启用'}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column
             label="操作">
             <template slot-scope="scope">
-              <el-button type="text" size="small">查看</el-button>
               <el-button type="text" size="small" @click="handlerEdit(scope.row.id)">编辑</el-button>
+              <el-button type="text" size="small" @click="handlerDel(scope.row.id)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -124,15 +126,16 @@
 </template>
 
 <script>
-import { majorList } from '@/api/major'
+import { majorList, delMajor } from '@/api/major'
 import MajorDialog from '@/views/major/MajorDialog'
-import MyDict from '@/components/Dict/MyDict'
+import { dict } from '@/utils/dict'
+import { dictFilter } from '@/utils/filters'
+import { myMessage, myConfirm } from '@/utils/message'
 
 export default {
   name: 'Major',
   components: {
-    MajorDialog,
-    MyDict
+    MajorDialog
   },
   data() {
     return {
@@ -147,14 +150,8 @@ export default {
         level: null,
         status: null
       },
-      level: [
-        { name: '本科', value: 5 },
-        { name: '专科', value: 6 }
-      ],
-      status: [
-        { name: '启用', value: 0 },
-        { name: '未启用', value: 1 }
-      ],
+      level: [],
+      status: [],
       dialog: {
         visible: false,
         title: '',
@@ -164,6 +161,8 @@ export default {
   },
   created() {
     this.getList()
+    this.level = dict('major-level')
+    this.status = dict('enable')
   },
   methods: {
     getList() {
@@ -177,10 +176,11 @@ export default {
       this.queryParams.current = current
       this.getList()
     },
-    handlerSelection(selection) {
-      console.log(selection)
-    },
     handlerSearch() {
+      this.getList()
+    },
+    handlerReset() {
+      this.queryParams = this.$options.data().queryParams
       this.getList()
     },
     handlerAddMajor() {
@@ -191,6 +191,27 @@ export default {
       this.dialog.id = id
       this.dialog.visible = true
       this.dialog.title = '修改专业'
+    },
+    handlerDel(id) {
+      const ids = []
+      if (id > 0) {
+        ids.push(id)
+      } else {
+        const data = this.$refs.MajorTable.selection
+        if (data.length === 0) {
+          myMessage('warning', '未选择删除项')
+          return
+        }
+        data.forEach(item => {
+          ids.push(item.id)
+        })
+      }
+      myConfirm('确认删除选中专业？').then(() => {
+        delMajor(ids).then(() => {
+          myMessage()
+          this.getList()
+        })
+      })
     },
     closeDialog() {
       this.dialog.visible = false

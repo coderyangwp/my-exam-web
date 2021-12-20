@@ -27,8 +27,11 @@ const mutations = {
 const actions = {
   getDict({ commit }, code) {
     if (code) {
-      dictDetail(code).then(res => {
-        commit('SAVE_DICT', res.data)
+      return new Promise((resolve, reject) => {
+        dictDetail(code).then(res => {
+          commit('SAVE_DICT', res.data)
+          resolve()
+        })
       })
     }
   }

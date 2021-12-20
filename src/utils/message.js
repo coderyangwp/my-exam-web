@@ -26,6 +26,11 @@ export function myNotice(title = '提示', message = '操作成功', type = 'suc
   })
 }
 
+/**
+ * 封装MessageBox
+ * @param content 提示内容
+ * @returns {Promise<MessageBoxData>}
+ */
 export function myConfirm(content) {
   return MessageBox.confirm(content, '提示', {
     confirmButtonText: '确定',

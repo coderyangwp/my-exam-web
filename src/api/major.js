@@ -1,5 +1,10 @@
 import request from '@/utils/request'
 
+/**
+ * 专业列表
+ * @param query
+ * @returns {AxiosPromise}
+ */
 export function majorList(query) {
   return request({
     url: '/major/list',
@@ -8,6 +13,11 @@ export function majorList(query) {
   })
 }
 
+/**
+ * 获取专业信息
+ * @param id  专业id
+ * @returns {AxiosPromise}
+ */
 export function majorDetail(id) {
   return request({
     url: '/major/' + id,
@@ -15,6 +25,11 @@ export function majorDetail(id) {
   })
 }
 
+/**
+ * 新增专业
+ * @param data  专业信息
+ * @returns {AxiosPromise}
+ */
 export function addMajor(data) {
   return request({
     url: '/major/add',
@@ -23,10 +38,27 @@ export function addMajor(data) {
   })
 }
 
+/**
+ * 更新专业信息
+ * @param data
+ * @returns {AxiosPromise}
+ */
 export function updateMajor(data) {
   return request({
     url: '/major/update',
     method: 'post',
     data: data
+  })
+}
+
+/**
+ * 删除专业
+ * @param ids 专业id
+ * @returns {AxiosPromise}
+ */
+export function delMajor(ids) {
+  return request({
+    url: '/major/del/' + ids,
+    method: 'get'
   })
 }

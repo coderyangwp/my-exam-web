@@ -62,3 +62,26 @@ export function delMajor(ids) {
     method: 'get'
   })
 }
+
+export function courseList(courseDto) {
+  return request({
+    url: '/course/list',
+    method: 'get',
+    params: courseDto
+  })
+}
+
+export function saveCourse(course) {
+  return request({
+    url: '/course/save',
+    method: 'post',
+    data: course
+  })
+}
+
+export function delCourse(ids) {
+  return request({
+    url: '/course/del/' + ids,
+    method: 'get'
+  })
+}

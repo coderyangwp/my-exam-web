@@ -8,12 +8,16 @@ import store from '@/store'
  * @returns {*}
  */
 export function dict(code) {
-  const dictMap = store.getters.dictMap
-  if (dictMap[code]) {
-    return dictMap[code].items
-  } else {
-    store.dispatch('dict/getDict', code).then(() => {
-      return store.getters.dictMap[code].items
-    })
-  }
+  return new Promise((resolve, reject) => {
+    let data = null
+    const dictMap = store.getters.dictMap
+    if (dictMap[code]) {
+      resolve(dictMap[code].items)
+    } else {
+      store.dispatch('dict/getDict', code).then(() => {
+        data = store.getters.dictMap[code].items
+        resolve(data)
+      })
+    }
+  })
 }

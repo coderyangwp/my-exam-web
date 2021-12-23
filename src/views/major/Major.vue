@@ -160,28 +160,28 @@ export default {
     }
   },
   created() {
-    this.getList()
+    this.load()
     this.level = dict('major-level')
     this.status = dict('enable')
   },
   methods: {
-    getList() {
-      majorList(this.queryParams).then(response => {
+    load() {
+      majorList(this.queryParams).then(res => {
         this.loading = false
-        this.tableData = response.data.records
-        this.total = response.data.total
+        this.tableData = res.data.records
+        this.total = res.data.total
       })
     },
     handleCurrentChange(current) {
       this.queryParams.current = current
-      this.getList()
+      this.load()
     },
     handlerSearch() {
-      this.getList()
+      this.load()
     },
     handlerReset() {
       this.queryParams = this.$options.data().queryParams
-      this.getList()
+      this.load()
     },
     handlerAddMajor() {
       this.dialog.visible = true
@@ -209,7 +209,7 @@ export default {
       myConfirm('确认删除选中专业？').then(() => {
         delMajor(ids).then(() => {
           myMessage()
-          this.getList()
+          this.load()
         })
       })
     },
@@ -219,16 +219,13 @@ export default {
     },
     handlerSaveFinish() {
       this.closeDialog()
-      this.getList()
+      this.load()
     }
   }
 }
 </script>
 
 <style scoped>
-  .search-content {
-    margin-bottom: 20px;
-  }
   .search-content .el-col{
     margin-right: 10px;
   }

@@ -7,11 +7,17 @@
 export function dictFilter(data, options) {
   if (options.length > 0) {
     options.forEach(item => {
-      if (item.code === data) {
-        return item.name
+      if (Object.prototype.toString.call(data) === '[object Number]') {
+        if (Number(item.code) === data) {
+          return item.name
+        }
+      } else {
+        if (item.code === data) {
+          return item.name
+        }
       }
     })
-  }else {
+  } else {
     return null
   }
 }

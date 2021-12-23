@@ -161,8 +161,8 @@ export default {
   },
   created() {
     this.load()
-    this.level = dict('major-level')
-    this.status = dict('enable')
+    dict('major-level').then(res => { this.level = res })
+    dict('enable').then(res => { this.status = res })
   },
   methods: {
     load() {

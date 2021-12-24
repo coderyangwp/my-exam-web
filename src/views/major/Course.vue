@@ -42,9 +42,6 @@
         <el-table-column prop="name" label="课程名称" />
         <el-table-column prop="score" label="课程学分" />
         <el-table-column prop="status" label="课程状态">
-          <template slot-scope="scope">
-            <el-tag type="success">{{scope.row.status | dictFilter(dictStatus)}}</el-tag>
-          </template>
         </el-table-column>
       </el-table>
     </el-row>
@@ -69,7 +66,7 @@
 
 <script>
 import { dict } from '@/utils/dict'
-import { dictFilter } from '@/utils/filters'
+/*import { dictFilter } from '@/utils/filters'*/
 import { courseList, saveCourse, delCourse } from '@/api/major'
 
 export default {
@@ -90,7 +87,7 @@ export default {
     }
   },
   created() {
-    this.dictStatus = dict('enable').then(res => {
+    dict('enable').then(res => {
       this.dictStatus = res
     })
     this.load()
@@ -112,10 +109,10 @@ export default {
     handlerReset() {
       this.queryParams = this.$options.data().queryParams
       this.load()
+    },
+    handlerDict(){
+
     }
-  },
-  filters: {
-    dictFilter
   }
 }
 </script>

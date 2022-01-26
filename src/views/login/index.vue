@@ -69,10 +69,7 @@ export default {
       loginRules: {
         username: [{ required: true, trigger: 'blur', message: '请填写用户名' }],
         password: [{ required: true, trigger: 'blur', message: '请填写密码' }],
-        captcha: [
-          { required: true, trigger: 'blur', message: '请填写验证码' },
-          { min: 4, max: 4, message: '验证码为四个字符', trigger: 'blur' }
-        ]
+        captcha: [{ required: true, trigger: 'blur', message: '请填写验证码' }]
       },
       loading: false,
       passwordType: 'password',
@@ -93,7 +90,7 @@ export default {
   methods: {
     getCaptcha() {
       captcha().then(res => {
-        this.codeUrl = 'data:image/gif;base64,' + res.data.code
+        this.codeUrl = res.data.code
         this.loginForm.uuid = res.data.uuid
       })
     },
@@ -124,7 +121,7 @@ export default {
     justify-content: center;
     align-items: center;
     height: 100%;
-    background-image: url("../../assets/image/login-background.jpg");
+    background-image: url("../../assets/image/background-img.jpg");
     background-size: cover;
     background-repeat: no-repeat;
   }

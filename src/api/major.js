@@ -63,6 +63,11 @@ export function delMajor(ids) {
   })
 }
 
+/**
+ * 课程列表
+ * @param courseDto
+ * @returns {AxiosPromise}
+ */
 export function courseList(courseDto) {
   return request({
     url: '/course/list',
@@ -71,6 +76,11 @@ export function courseList(courseDto) {
   })
 }
 
+/**
+ * 新增/修改课程
+ * @param course
+ * @returns {AxiosPromise}
+ */
 export function saveCourse(course) {
   return request({
     url: '/course/save',
@@ -79,6 +89,11 @@ export function saveCourse(course) {
   })
 }
 
+/**
+ * 删除课程
+ * @param ids
+ * @returns {AxiosPromise}
+ */
 export function delCourse(ids) {
   return request({
     url: '/course/del/' + ids,

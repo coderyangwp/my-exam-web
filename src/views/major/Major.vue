@@ -20,7 +20,7 @@
         />
       </el-col>
       <el-col :span="3">
-        <el-select v-model="queryParams.level" size="small" placeholder="请选择专业层次">
+        <el-select v-model="queryParams.level" size="small" clearable placeholder="请选择专业层次">
           <el-option
             v-for="item in level"
             :key="item.id"
@@ -30,7 +30,7 @@
         </el-select>
       </el-col>
       <el-col :span="3">
-        <el-select v-model="queryParams.status" size="small" placeholder="请选择专业状态">
+        <el-select v-model="queryParams.status" size="small" clearable placeholder="请选择专业状态">
           <el-option
             v-for="item in status"
             :key="item.id"
@@ -46,10 +46,9 @@
     </el-row>
     <el-row class="search-content">
       <el-col>
-        <el-button-group>
-          <el-button size="small" icon="el-icon-plus" @click="handlerAddMajor">添加专业</el-button>
-          <el-button size="small" icon="el-icon-delete" @click="handlerDel">删除专业</el-button>
-        </el-button-group>
+        <el-button size="mini" type="primary" icon="el-icon-plus" @click="handlerAddMajor">添加</el-button>
+        <el-button size="mini" type="success" icon="el-icon-edit" :disabled="selections.length !== 1" @click="handlerEdit(selections[0])">编辑</el-button>
+        <el-button size="mini" type="danger" icon="el-icon-delete" :disabled="selections.length === 0" @click="handlerDel(selections)">删除</el-button>
       </el-col>
     </el-row>
     <el-row>
@@ -60,6 +59,7 @@
           ref="MajorTable"
           border
           style="width: 100%"
+          @selection-change="select"
         >
           <el-table-column
             type="selection"
@@ -92,8 +92,8 @@
           <el-table-column
             label="操作">
             <template slot-scope="scope">
-              <el-button type="text" size="small" @click="handlerEdit(scope.row.id)">编辑</el-button>
-              <el-button type="text" size="small" @click="handlerDel(scope.row.id)">删除</el-button>
+              <el-button type="primary" size="mini" icon="el-icon-edit" @click="handlerEdit(scope.row)"></el-button>
+              <el-button type="danger" size="mini" icon="el-icon-delete" @click="handlerDel(scope.row)"></el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -129,7 +129,6 @@
 import { majorList, delMajor } from '@/api/major'
 import MajorDialog from '@/views/major/MajorDialog'
 import { dict } from '@/utils/dict'
-import { dictFilter } from '@/utils/filters'
 import { myMessage, myConfirm } from '@/utils/message'
 
 export default {
@@ -156,7 +155,8 @@ export default {
         visible: false,
         title: '',
         id: null
-      }
+      },
+      selections: []
     }
   },
   created() {
@@ -183,28 +183,24 @@ export default {
       this.queryParams = this.$options.data().queryParams
       this.load()
     },
+    select(selection) {
+      this.selections = selection
+    },
     handlerAddMajor() {
       this.dialog.visible = true
       this.dialog.title = '新增专业'
     },
-    handlerEdit(id) {
-      this.dialog.id = id
+    handlerEdit(data) {
+      this.dialog.id = data.id
       this.dialog.visible = true
       this.dialog.title = '修改专业'
     },
-    handlerDel(id) {
+    handlerDel(data) {
       const ids = []
-      if (id > 0) {
-        ids.push(id)
+      if (Object.prototype.toString.call(data) === '[object Array]') {
+        data.forEach(item => ids.push(item.id))
       } else {
-        const data = this.$refs.MajorTable.selection
-        if (data.length === 0) {
-          myMessage('warning', '未选择删除项')
-          return
-        }
-        data.forEach(item => {
-          ids.push(item.id)
-        })
+        ids.push(data.id)
       }
       myConfirm('确认删除选中专业？').then(() => {
         delMajor(ids).then(() => {

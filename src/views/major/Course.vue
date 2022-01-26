@@ -24,10 +24,9 @@
       </el-col>
     </el-row>
     <el-row class="search-content">
-      <el-button-group>
-        <el-button size="small" icon="el-icon-plus">添加课程</el-button>
-        <el-button size="small" icon="el-icon-delete">删除课程</el-button>
-      </el-button-group>
+      <el-button type="primary" size="small" icon="el-icon-plus" @click="handlerAdd">添加</el-button>
+      <el-button type="success" size="small" icon="el-icon-edit" :disabled="selections.length !== 1" @click="handlerEdit(selections[0])">修改</el-button>
+      <el-button type="danger" size="small" icon="el-icon-delete" :disabled="selections.length === 0" @click="handlerDel(selections)">删除</el-button>
     </el-row>
     <el-row>
       <el-table
@@ -36,12 +35,24 @@
         :header-cell-style="{'text-align':'center'}"
         :cell-style="{'text-align':'center'}"
         v-loading="loading"
+        @selection-change="select"
       >
         <el-table-column type="selection" />
         <el-table-column prop="code" label="课程代码" />
         <el-table-column prop="name" label="课程名称" />
         <el-table-column prop="score" label="课程学分" />
         <el-table-column prop="status" label="课程状态">
+          <template slot-scope="scope">
+            <el-tag
+              :type="scope.row.status === 0 ? 'danger' : 'success'"
+              disable-transitions>{{scope.row.status === 0 ? '未启用' : '启用'}}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-button type="primary" size="mini" icon="el-icon-edit" @click="handlerEdit(scope.row)"></el-button>
+            <el-button type="danger" size="mini" icon="el-icon-delete" @click="handlerDel(scope.row)"></el-button>
+          </template>
         </el-table-column>
       </el-table>
     </el-row>
@@ -61,16 +72,21 @@
         </el-pagination>
       </el-col>
     </el-row>
+    <course-dialog :dialog="dialog" @closeDialog="closeDialog" />
   </div>
 </template>
 
 <script>
 import { dict } from '@/utils/dict'
-/*import { dictFilter } from '@/utils/filters'*/
-import { courseList, saveCourse, delCourse } from '@/api/major'
+import { courseList, delCourse } from '@/api/major'
+import { myConfirm, myMessage } from '@/utils/message'
+import CourseDialog from '@/views/major/CourseDialog'
 
 export default {
   name: 'Course',
+  components: {
+    CourseDialog
+  },
   data() {
     return {
       courseData: null,
@@ -83,7 +99,13 @@ export default {
         current: 1
       },
       total: 0,
-      loading: true
+      loading: true,
+      dialog: {
+        visible: false,
+        title: '',
+        id: 0
+      },
+      selections: []
     }
   },
   created() {
@@ -110,8 +132,38 @@ export default {
       this.queryParams = this.$options.data().queryParams
       this.load()
     },
-    handlerDict(){
-
+    select(selection) {
+      this.selections = selection
+    },
+    handlerAdd() {
+      this.dialog.visible = true
+      this.dialog.title = '新增课程'
+    },
+    handlerEdit(data) {
+      this.dialog.title = '修改课程'
+      Object.assign(this.dialog, data)
+      this.dialog.visible = true
+      this.dialog.title = '修改课程'
+    },
+    handlerDel(data) {
+      const ids = []
+      if (Object.prototype.toString.call(data) === '[object Array]') {
+        data.forEach(item => ids.push(item.id))
+      } else {
+        ids.push(data.id)
+      }
+      myConfirm('确认删除选中专业？').then(() => {
+        delCourse(ids).then(() => {
+          myMessage()
+          this.load()
+        })
+      })
+    },
+    closeDialog(payload) {
+      Object.assign(this.dialog, this.$options.data().dialog)
+      if (payload.reload) {
+        this.load()
+      }
     }
   }
 }

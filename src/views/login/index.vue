@@ -13,7 +13,7 @@
           type="text"
           tabindex="1"
           auto-complete="on"
-          prefix-icon="icon-aliyonghu"
+          prefix-icon="icon-yonghu"
           clearable
         />
       </el-form-item>
@@ -30,7 +30,7 @@
           auto-complete="on"
           @keyup.enter.native="handleLogin"
           show-password
-          prefix-icon="icon-alimima"
+          prefix-icon="icon-mima"
           clearable
         />
       </el-form-item>
@@ -40,7 +40,7 @@
           v-model="loginForm.captcha"
           placeholder="验证码"
           style="width: 69%"
-          prefix-icon="icon-aliyanzhengma"
+          prefix-icon="icon-yanzhengma"
           clearable
           />
         <div class="login-code">

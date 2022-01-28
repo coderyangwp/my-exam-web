@@ -1,11 +1,14 @@
 import defaultSettings from '@/settings'
+import constantRouterMap from '@/router/index'
 
-const { showSettings, fixedHeader, sidebarLogo } = defaultSettings
+const { showSettings, fixedHeader, sidebarLogo, tagsView } = defaultSettings
 
 const state = {
   showSettings: showSettings,
   fixedHeader: fixedHeader,
-  sidebarLogo: sidebarLogo
+  sidebarLogo: sidebarLogo,
+  routers: constantRouterMap,
+  tagsView: tagsView
 }
 
 const mutations = {

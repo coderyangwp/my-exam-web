@@ -2,9 +2,128 @@
   "id": "3004487",
   "name": "my-exam",
   "font_family": "iconfont",
-  "css_prefix_text": "icon-ali",
+  "css_prefix_text": "icon-",
   "description": "",
   "glyphs": [
+    {
+      "icon_id": "508413",
+      "name": "企业核查比对",
+      "font_class": "qiyehechabidui",
+      "unicode": "e623",
+      "unicode_decimal": 58915
+    },
+    {
+      "icon_id": "3392080",
+      "name": "司法考试",
+      "font_class": "sifakaoshi",
+      "unicode": "e6fb",
+      "unicode_decimal": 59131
+    },
+    {
+      "icon_id": "3702628",
+      "name": "信息维护",
+      "font_class": "navicon-xxwh",
+      "unicode": "e641",
+      "unicode_decimal": 58945
+    },
+    {
+      "icon_id": "4933250",
+      "name": "更新时间",
+      "font_class": "gengxinshijian",
+      "unicode": "e705",
+      "unicode_decimal": 59141
+    },
+    {
+      "icon_id": "5064085",
+      "name": "管理",
+      "font_class": "guanli",
+      "unicode": "e640",
+      "unicode_decimal": 58944
+    },
+    {
+      "icon_id": "5809083",
+      "name": "人员报名",
+      "font_class": "renyuanbaoming",
+      "unicode": "e65b",
+      "unicode_decimal": 58971
+    },
+    {
+      "icon_id": "8455509",
+      "name": "统计",
+      "font_class": "tongji",
+      "unicode": "e61a",
+      "unicode_decimal": 58906
+    },
+    {
+      "icon_id": "9678759",
+      "name": "zip-ext",
+      "font_class": "zip-ext",
+      "unicode": "e604",
+      "unicode_decimal": 58884
+    },
+    {
+      "icon_id": "9678764",
+      "name": "txt-ext",
+      "font_class": "txt-ext",
+      "unicode": "e606",
+      "unicode_decimal": 58886
+    },
+    {
+      "icon_id": "11441273",
+      "name": "excel",
+      "font_class": "excel",
+      "unicode": "e802",
+      "unicode_decimal": 59394
+    },
+    {
+      "icon_id": "11441567",
+      "name": "pdf",
+      "font_class": "pdf",
+      "unicode": "e803",
+      "unicode_decimal": 59395
+    },
+    {
+      "icon_id": "11447681",
+      "name": "word2",
+      "font_class": "word",
+      "unicode": "e806",
+      "unicode_decimal": 59398
+    },
+    {
+      "icon_id": "16365912",
+      "name": "专业 专业课",
+      "font_class": "zhuanyezhuanyeke",
+      "unicode": "e6a1",
+      "unicode_decimal": 59041
+    },
+    {
+      "icon_id": "17619177",
+      "name": "投标报名",
+      "font_class": "tubiaozhizuomoban-111",
+      "unicode": "e614",
+      "unicode_decimal": 58900
+    },
+    {
+      "icon_id": "22049428",
+      "name": "课程",
+      "font_class": "kecheng",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "26001376",
+      "name": "在线学习、考试、培训、课程-48",
+      "font_class": "a-zaixianxuexikaoshipeixunkecheng-48",
+      "unicode": "e8d2",
+      "unicode_decimal": 59602
+    },
+    {
+      "icon_id": "27253675",
+      "name": "重置",
+      "font_class": "zhongzhi",
+      "unicode": "e615",
+      "unicode_decimal": 58901
+    },
     {
       "icon_id": "957599",
       "name": "验证码",

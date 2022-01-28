@@ -59,19 +59,36 @@ export const constantRoutes = [
     path: '/major',
     name: 'Major',
     component: Layout,
-    meta: { title: '专业课程', icon: 'el-icon-copy-document' },
+    meta: { title: '专业课程', icon: 'icon-word' },
     children: [
       {
         path: 'index',
         name: 'Index',
         component: () => import('@/views/major/Major'),
-        meta: { title: '专业管理', icon: 'el-icon-notebook-1' }
+        meta: { title: '专业管理', icon: 'icon-zhuanyezhuanyeke' },
+        affix: true
       },
       {
         path: 'course',
         name: 'Course',
         component: () => import('@/views/major/Course'),
-        meta: { title: '课程管理', icon: 'el-icon-notebook-1' }
+        meta: { title: '课程管理', icon: 'icon-kecheng' },
+        affix: true
+      }
+    ]
+  },
+  {
+    path: '/exam',
+    name: 'Exam',
+    component: Layout,
+    meta: { title: '发起考试', icon: 'icon-sifakaoshi' },
+    alwaysShow: true,
+    children: [
+      {
+        path: 'index',
+        name: 'Index',
+        component: () => import('@/views/exam/Exam'),
+        meta: { title: '考试管理', icon: 'el-icon-set-up' }
       }
     ]
   },

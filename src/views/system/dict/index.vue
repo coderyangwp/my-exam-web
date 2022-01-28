@@ -5,9 +5,9 @@
         <el-row type="flex" justify="space-between" class="m-b-20">
           <el-col>
             <el-button-group>
-              <el-button size="small" icon="el-icon-plus" @click="handlerDictAdd">添加</el-button>
-              <el-button type="small" icon="el-icon-edit" @click="handlerDictUpdate">修改</el-button>
-              <el-button size="small" icon="el-icon-delete" @click="handlerDictDel">删除</el-button>
+              <el-button type="primary" size="mini" icon="el-icon-plus" @click="handlerDictAdd">添加</el-button>
+              <el-button type="success" size="mini" icon="el-icon-edit" :disabled="selections.length !== 1" @click="handlerDictUpdate">修改</el-button>
+              <el-button type="danger" size="mini" icon="el-icon-delete" :disabled="selections.length === 0" @click="handlerDictDel">删除</el-button>
             </el-button-group>
           </el-col>
           <el-col class="text-r">
@@ -40,6 +40,7 @@
             size="mini"
             highlight-current-row
             @current-change="handlerSelectRow"
+            @selection-change="select"
           >
             <el-table-column
               type="selection"
@@ -95,9 +96,9 @@
         <el-row type="flex" justify="space-between" class="m-b-20">
           <el-col>
             <el-button-group>
-              <el-button size="mini" icon="el-icon-plus" :disabled="currentDict==null" @click="handlerChildAdd">添加</el-button>
-              <el-button type="mini" icon="el-icon-edit" @click="handlerChildEdit">修改</el-button>
-              <el-button size="mini" icon="el-icon-delete" @click="handlerChildDel">删除</el-button>
+              <el-button type="primary" size="mini" icon="el-icon-plus" :disabled="currentDict==null" @click="handlerChildAdd">添加</el-button>
+              <el-button type="success" size="mini" icon="el-icon-edit" :disabled="childSelections.length !== 1" @click="handlerChildEdit">修改</el-button>
+              <el-button type="danger" size="mini" icon="el-icon-delete" :disabled="childSelections.length === 0" @click="handlerChildDel">删除</el-button>
             </el-button-group>
           </el-col>
         </el-row>
@@ -111,6 +112,7 @@
             :header-cell-style="{'text-align':'center'}"
             :cell-style="{'text-align':'center'}"
             highlight-current-row
+            @selection-change="childSelect"
           >
             <el-table-column
               type="selection"
@@ -174,7 +176,9 @@ export default {
         dictCode: null,
         name: null,
         code: null
-      }
+      },
+      selections: [],
+      childSelections: []
     }
   },
   created() {
@@ -190,6 +194,12 @@ export default {
     // 获取
     handleCurrentChange(current) {
       this.queryParams.current = current
+    },
+    select(selection) {
+      this.selections = selection
+    },
+    childSelect(selection) {
+      this.childSelections = selection
     },
     // 点击字典，查看该字典的子数据
     handlerSelectRow(currentRow) {
@@ -209,12 +219,7 @@ export default {
     },
     // 编辑字典 只能选一条
     handlerDictUpdate() {
-      let data = this.$refs.DictTable.selection
-      if (data.length !== 1) {
-        myMessage('warning', '请选择字典')
-        return
-      }
-      data = data[0]
+      const data = this.selections[0]
       // 删除多余属性
       delete data.current
       delete data.size
@@ -225,16 +230,11 @@ export default {
     },
     // 删除字典 可多选
     handlerDictDel() {
-      const data = this.$refs.DictTable.selection
-      if (data.length === 0) {
-        myMessage('error', '请选择字典')
-        return
-      }
       myConfirm('确认删除选中字典？').then(() => {
         const ids = []
         // 记录code是为了将vuex中的数据删除
         const codes = []
-        data.filter(item => {
+        this.selections.filter(item => {
           ids.push(item.id)
           codes.push(item.code)
         })
@@ -266,12 +266,7 @@ export default {
     },
     // 编辑字典项
     handlerChildEdit() {
-      let data = this.$refs.ChildTable.selection
-      if (data.length !== 1) {
-        myMessage('warning', '请选择字典项')
-        return
-      }
-      data = data[0]
+      const data = this.childSelections[0]
       delete data.current
       delete data.size
       this.childDialog = JSON.parse(JSON.stringify(data))
@@ -280,14 +275,9 @@ export default {
     },
     // 删除字典项
     handlerChildDel() {
-      const data = this.$refs.ChildTable.selection
-      if (data.length === 0) {
-        myMessage('error', '请选择要删除的数据')
-        return
-      }
       myConfirm('确认删除?').then(() => {
         const ids = []
-        data.filter(item => {
+        this.childSelections.filter(item => {
           return ids.push(item.id)
         })
         deleteDictChild(ids).then(res => {

@@ -61,7 +61,7 @@ export default {
     return {
       codeUrl: '',
       loginForm: {
-        username: 'user1',
+        username: 'admin',
         password: '123456',
         captcha: '',
         uuid: ''

@@ -18,6 +18,8 @@
               prefix-icon="el-icon-edit"
               clearable
               class="input-w-150 m-r-5"
+              @keyup.enter.native="load"
+              @clear="reload"
             />
             <el-button
               size="mini"
@@ -157,7 +159,7 @@ export default {
       queryParams: {
         current: 1,
         size: 10,
-        name: ''
+        name: null
       },
       dictDialog: {
         visible: false,
@@ -190,6 +192,10 @@ export default {
         this.dict = response.data.records
         this.total = response.data.total
       })
+    },
+    reload() {
+      Object.assign(this.queryParams, this.$options.data().queryParams)
+      this.load()
     },
     // 获取
     handleCurrentChange(current) {

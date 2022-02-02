@@ -67,7 +67,6 @@
         </template>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="submitForm">确 定</el-button>
       </span>
     </el-dialog>
@@ -76,6 +75,7 @@
 
 <script>
 import { saveExamInfo } from '@/api/exam.js'
+import { myMessage } from '@/utils/message'
 
 export default {
   name: '',
@@ -128,9 +128,9 @@ export default {
     submitForm(formName) {
       this.$refs.examForm.validate((valid) => {
         if (valid) {
-          console.log(this.examForm);return
           saveExamInfo(this.examForm).then(res => {
-            
+            myMessage()
+            this.handleClose(true)
           })
         } else {
           console.log('error submit!!');
@@ -140,6 +140,7 @@ export default {
     },
     handleClose(reload) {
       this.$refs.examForm.resetFields()
+      Object.assign(this.$data, this.$options.data())
       this.$emit('closeExamDialog', { payload: reload })
     }
   },

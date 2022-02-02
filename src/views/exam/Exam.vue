@@ -39,7 +39,11 @@
           border
           style="width: 100%"
           :header-cell-style="{'text-align':'center'}"
-          :cell-style="{'text-align':'center'}">
+          :cell-style="{'text-align':'center'}"
+          highlight-current-row
+          @selection-change="selectRow"
+          @current-change="currentRow"
+          >
           <el-table-column type="selection" />
           <el-table-column
             prop="year"
@@ -75,6 +79,7 @@
 </template>
 
 <script>
+import { examList } from '@/api/exam.js' 
 import { dict } from '@/utils/dict'
 import ExamDialog from '@/views/exam/ExamDialog'
 
@@ -85,30 +90,9 @@ export default {
   },
   data() {
     return {
-      tableData: [{
-        year: '2021',
-        month: '10',
-        name: '2021年10月高等教育自学考试',
-        status: 1
-      }, {
-        year: '2021',
-        month: '4',
-        name: '2021年4月高等教育自学考试',
-        status: 0
-      }, {
-        year: '2020',
-        month: '10',
-        name: '2020年10月高等教育自学考试',
-        status: 0
-      }, {
-        year: '2020',
-        month: '4',
-        name: '2020年4月高等教育自学考试',
-        status: 0
-      }],
+      tableData: [],
       queryParams: {
         name: null,
-        code: null,
         status: null,
         size: 10,
         current: 1
@@ -118,7 +102,8 @@ export default {
       examDialog: {
         title: '维护考试信息',
         visible: false
-      }
+      },
+      currentExam: {}
     }
   },
   created() {
@@ -129,10 +114,15 @@ export default {
   },
   methods: {
     load() {
-
+      examList(this.queryParams).then(r => {
+        this.tableData = r.data.records
+      })
     },
     handlerReset() {
-
+      Object.assign(this.queryParams, this.$options.data().queryParams)
+      this.selectRow = {}
+      this.selections = []
+      this.load()
     },
     handlerAdd() {
       this.examDialog.visible = true
@@ -142,6 +132,12 @@ export default {
     },
     handlerDel() {
 
+    },
+    selectRow(selection) {
+      this.selections = selection
+    },
+    selectRow(currentRow) {
+      this.currentExam = currentRow
     },
     handlerCloseDialog(payload) {
       Object.assign(this.examDialog, this.$options.data().examDialog)

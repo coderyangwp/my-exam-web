@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-row :gutter="20">
-      <el-col :span="10">
+      <el-col :span="12">
         <el-row type="flex" justify="space-between" class="m-b-20">
           <el-col>
             <el-button-group>

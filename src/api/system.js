@@ -50,14 +50,22 @@ export function saveDictChild(dictDetail) {
     data: dictDetail
   })
 }
-
+/**
+ * 删除字典
+ * @param ids 
+ * @returns 
+ */
 export function delDict(ids) {
   return request({
     url: '/dict/del/' + ids,
     method: 'get'
   })
 }
-
+/**
+ * 删除字典数据
+ * @param ids 
+ * @returns 
+ */
 export function deleteDictChild(ids) {
   return request({
     url: '/dict/child/' + ids,

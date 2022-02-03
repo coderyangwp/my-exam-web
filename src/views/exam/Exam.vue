@@ -1,18 +1,7 @@
 <template>
   <div class="app-container">
     <el-row :gutter="20">
-      <el-col :span="8">
-        <el-descriptions :column=1 :border="true">
-          <el-descriptions-item label="考试名称">2022年上半年新疆维吾尔自治区高等教育自学考试</el-descriptions-item>
-          <el-descriptions-item label="年份">2022</el-descriptions-item>
-          <el-descriptions-item label="月份">4</el-descriptions-item>
-          <el-descriptions-item label="第一场">4月16日 10:00 - 4月16日 12:30</el-descriptions-item>
-          <el-descriptions-item label="第二场">4月16日 14:00 - 4月16日 16:30</el-descriptions-item>
-          <el-descriptions-item label="第三场">4月17日 10:00 - 4月17日 12:30</el-descriptions-item>
-          <el-descriptions-item label="第四场">4月17日 14:00 - 4月17日 16:30</el-descriptions-item>
-        </el-descriptions>
-      </el-col>
-      <el-col :span="16">
+      <el-col :span="14">
         <el-row type="flex" justify="space-between" class="exam-toolbar">
           <el-col :span="8">
             <el-button type="primary" size="small" icon="el-icon-plus" @click="handlerAdd">添加</el-button>
@@ -20,7 +9,7 @@
             <el-button type="danger" size="small" icon="el-icon-delete" :disabled="selections.length === 0" @click="handlerDel(selections)">删除</el-button>
           </el-col>
           <el-col :span="16" class="exam-toolbar-right">
-            <el-input v-model="queryParams.code" placeholder="请输入考试名称" size="small" clearable />
+            <el-input v-model="queryParams.name" placeholder="请输入考试名称" size="small" clearable />
             <el-select v-model="queryParams.status" size="small" placeholder="请选择考试状态">
               <el-option
                 v-for="item in dictStatus"
@@ -68,20 +57,53 @@
             </template>
           </el-table-column>
         </el-table>
+        <el-pagination
+          class="fr pagination-container"
+          background
+          layout="prev, pager, next, total"
+          :total="total"
+          :page-size="queryParams.size"
+          :current-page="queryParams.current"
+          @current-change="handleCurrentChange">
+          <template slot="total">
+            总数
+          </template>
+        </el-pagination>
+      </el-col>
+      <el-col v-show="Object.keys(currentExam).length > 0" :span="10">
+        <table class="exam-arrange">
+          <tr>
+            <td>考试名称</td>
+            <td colspan="3" v-text="currentExam.name"></td>
+          </tr>
+          <tr>
+            <td>考试年份</td>
+            <td v-text="currentExam.year + '年'"></td>
+            <td>考试月份</td>
+            <td v-text="currentExam.month + '月'"></td>
+          </tr>
+          <tr>
+            <td colspan="4">考试安排</td>
+          </tr>
+          <template v-for="(arrange,index) in currentExam.examArrangeList">
+            <tr>
+              <td v-text="'第' + (index + 1) + '场'"></td>
+              <td colspan="3">{{arrange.examDate | dateFormat}} {{arrange.startTime}} - {{arrange.endTime}}</td>
+            </tr>
+          </template>
+        </table>
       </el-col>
     </el-row>
-    <el-row>
-
-    </el-row>
-
     <exam-dialog :examInfo="examDialog" @closeExamDialog="handlerCloseDialog"></exam-dialog>
   </div>
 </template>
 
 <script>
-import { examList } from '@/api/exam.js' 
-import { dict } from '@/utils/dict'
 import ExamDialog from '@/views/exam/ExamDialog'
+import { examList, delExam } from '@/api/exam.js' 
+import { dict } from '@/utils/dict'
+import { myMessage, myConfirm } from '@/utils/message'
+import { formatDates } from '@/utils/date.js'
 
 export default {
   name: 'Exam',
@@ -91,6 +113,7 @@ export default {
   data() {
     return {
       tableData: [],
+      total: 0,
       queryParams: {
         name: null,
         status: null,
@@ -101,14 +124,20 @@ export default {
       selections: [],
       examDialog: {
         title: '维护考试信息',
-        visible: false
+        visible: false,
+        id: 0,
+        name: null,
+        year: null,
+        month: null,
+        status: null,
+        examArrangeList: []
       },
       currentExam: {}
     }
   },
   created() {
-    dict('enable').then(res => {
-      this.dictStatus = res
+    dict('enable').then(r => {
+      this.dictStatus = r
     })
     this.load()
   },
@@ -116,31 +145,54 @@ export default {
     load() {
       examList(this.queryParams).then(r => {
         this.tableData = r.data.records
+        this.total = r.data.total
       })
     },
     handlerReset() {
-      Object.assign(this.queryParams, this.$options.data().queryParams)
-      this.selectRow = {}
       this.selections = []
+      this.currentExam = {}
+      Object.assign(this.queryParams, this.$options.data().queryParams)
       this.load()
+    },
+    handleCurrentChange(current) {
+      this.queryParams.current = current
     },
     handlerAdd() {
       this.examDialog.visible = true
     },
-    handlerEdit() {
-
+    handlerEdit(data) {
+      Object.assign(this.examDialog, data)
+      this.examDialog.visible = true
     },
     handlerDel() {
-
+      const ids = []
+      this.selections.filter(item => {
+        ids.push(item.id)
+      });
+      myConfirm('确认删除勾选的考试？').then(() => {
+        delExam(ids).then(r => {
+          myMessage()
+          this.handlerReset()
+        })
+      })
     },
     selectRow(selection) {
       this.selections = selection
     },
-    selectRow(currentRow) {
+    currentRow(currentRow) {
       this.currentExam = currentRow
     },
     handlerCloseDialog(payload) {
       Object.assign(this.examDialog, this.$options.data().examDialog)
+      console.log(payload);
+      if(payload.reload) {
+        this.handlerReset()
+      }
+    }
+  },
+  filters: {
+    dateFormat(d) {
+      return formatDates(new Date(d), 'MM-dd日')
     }
   }
 }
@@ -158,5 +210,26 @@ export default {
  }
  .exam-toolbar-right .el-input, .exam-toolbar-right .el-select {
    padding-right: 10px;
+ }
+ .exam-arrange {
+   width: 100%;
+   border-collapse: collapse;
+ }
+ .exam-arrange tr {
+   line-height: 30px;
+ }
+ .exam-arrange td {
+   padding: 5px;
+   border: 1px solid #EBEEF5;
+   width: 25%;
+   text-align: center;
+   font-size: 14px;
+    color: #606266;
+ }
+ .exam-arrange td:nth-child(odd) {
+   width: 20%;
+ }
+  .exam-arrange td:nth-child(even) {
+   width: 30%;
  }
 </style>

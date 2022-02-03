@@ -85,14 +85,26 @@ export default {
       visible: {
         type: Boolean,
         default: false
-      }
+      },
+      id: 0,
+      name: null,
+      year: null,
+      month: null,
+      status: null,
+      examArrangeList: []
     }
   },
   data() {
     return {
       examForm: {
+        id: 0,
         name: null,
+        year: null,
+        month: null,
+        status: null,
         examArrangeList: [{
+          id: 0,
+          examId: null,
           examDate: null,
           startTime: null,
           endTime: null
@@ -103,15 +115,18 @@ export default {
       }
     }
   },
-  computed: {
-  },
   watch: {
-
+    examInfo: {
+      handler(data) {
+        if(data.visible && data.id > 0) {
+          // 当data中包含二级属性时，使用Object.assign为钱拷贝，修改examForm的值会导致数据重新渲染，修改数据被还原
+          this.examForm = JSON.parse(JSON.stringify(data))
+        }
+      },
+      deep: true
+    }
   },
   methods: {
-    load() {
-      
-    },
     removeArrange(item) {
       var index = this.examForm.examArrangeList.indexOf(item)
       if (index !== -1) {
@@ -139,17 +154,12 @@ export default {
       });
     },
     handleClose(reload) {
-      this.$refs.examForm.resetFields()
-      Object.assign(this.$data, this.$options.data())
-      this.$emit('closeExamDialog', { payload: reload })
+      // 不使用resetFields方法，因为对于数组元素无法清空
+      this.$refs['examForm'].clearValidate();
+      Object.assign(this.examForm, this.$options.data().examForm)
+      this.$emit('closeExamDialog', { reload: reload })
     }
-  },
-  created() {
-    
-  },
-  mounted() {
-    
-  },
+  }
 }
 </script>
 

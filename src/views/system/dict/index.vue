@@ -188,9 +188,9 @@ export default {
   },
   methods: {
     load() {
-      dictList(this.queryParams).then(response => {
-        this.dict = response.data.records
-        this.total = response.data.total
+      dictList(this.queryParams).then(r => {
+        this.dict = r.data.records
+        this.total = r.data.total
       })
     },
     reload() {

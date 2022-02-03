@@ -23,3 +23,10 @@ export function saveExamInfo(data){
         method: 'post'
     })
 }
+
+export function delExam(ids) {
+    return request({
+        url: '/exam/del/' + ids,
+        method: 'get'
+    })
+}

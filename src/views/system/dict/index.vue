@@ -2,12 +2,33 @@
   <div class="app-container">
     <el-row :gutter="20">
       <el-col :span="12">
-        <el-row type="flex" justify="space-between" class="m-b-20">
+        <el-row
+          type="flex"
+          justify="space-between"
+          class="m-b-20"
+        >
           <el-col>
             <el-button-group>
-              <el-button type="primary" size="mini" icon="el-icon-plus" @click="handlerDictAdd">添加</el-button>
-              <el-button type="success" size="mini" icon="el-icon-edit" :disabled="selections.length !== 1" @click="handlerDictUpdate">修改</el-button>
-              <el-button type="danger" size="mini" icon="el-icon-delete" :disabled="selections.length === 0" @click="handlerDictDel">删除</el-button>
+              <el-button
+                type="primary"
+                size="mini"
+                icon="el-icon-plus"
+                @click="handlerDictAdd"
+              >添加</el-button>
+              <el-button
+                type="success"
+                size="mini"
+                icon="el-icon-edit"
+                :disabled="selections.length !== 1"
+                @click="handlerDictUpdate"
+              >修改</el-button>
+              <el-button
+                type="danger"
+                size="mini"
+                icon="el-icon-delete"
+                :disabled="selections.length === 0"
+                @click="handlerDictDel"
+              >删除</el-button>
             </el-button-group>
           </el-col>
           <el-col class="text-r">
@@ -33,8 +54,8 @@
         </el-row>
         <el-row>
           <el-table
-            :data="dict"
             ref="DictTable"
+            :data="dict"
             style="width: 100%"
             :border="true"
             :header-cell-style="{'text-align':'center'}"
@@ -46,33 +67,31 @@
           >
             <el-table-column
               type="selection"
-              width="55">
-            </el-table-column>
+              width="55"
+            />
             <el-table-column
               prop="name"
               label="字典名称"
               sortable
-            >
-            </el-table-column>
+            />
             <el-table-column
               prop="code"
               label="字典编码"
               sortable
-              >
-            </el-table-column>
+            />
             <el-table-column
               prop="descript"
               label="字典描述"
-              >
-            </el-table-column>
+            />
             <el-table-column
               prop="status"
               label="字典状态"
-              >
+            >
               <template slot-scope="scope">
                 <el-tag
                   :type="scope.row.status === 0 ? 'danger' : 'success'"
-                  disable-transitions>{{scope.row.status?'正常':'冻结'}}</el-tag>
+                  disable-transitions
+                >{{ scope.row.status?'正常':'冻结' }}</el-tag>
               </template>
             </el-table-column>
           </el-table>
@@ -86,7 +105,8 @@
               :total="total"
               :page-size="queryParams.size"
               :current-page="queryParams.current"
-              @current-change="handleCurrentChange">
+              @current-change="handleCurrentChange"
+            >
               <template slot="total">
                 总数
               </template>
@@ -95,19 +115,41 @@
         </el-row>
       </el-col>
       <el-col :span="12">
-        <el-row type="flex" justify="space-between" class="m-b-20">
+        <el-row
+          type="flex"
+          justify="space-between"
+          class="m-b-20"
+        >
           <el-col>
             <el-button-group>
-              <el-button type="primary" size="mini" icon="el-icon-plus" :disabled="currentDict==null" @click="handlerChildAdd">添加</el-button>
-              <el-button type="success" size="mini" icon="el-icon-edit" :disabled="childSelections.length !== 1" @click="handlerChildEdit">修改</el-button>
-              <el-button type="danger" size="mini" icon="el-icon-delete" :disabled="childSelections.length === 0" @click="handlerChildDel">删除</el-button>
+              <el-button
+                type="primary"
+                size="mini"
+                icon="el-icon-plus"
+                :disabled="currentDict==null"
+                @click="handlerChildAdd"
+              >添加</el-button>
+              <el-button
+                type="success"
+                size="mini"
+                icon="el-icon-edit"
+                :disabled="childSelections.length !== 1"
+                @click="handlerChildEdit"
+              >修改</el-button>
+              <el-button
+                type="danger"
+                size="mini"
+                icon="el-icon-delete"
+                :disabled="childSelections.length === 0"
+                @click="handlerChildDel"
+              >删除</el-button>
             </el-button-group>
           </el-col>
         </el-row>
         <el-row>
           <el-table
-            :data="dictChild"
             ref="ChildTable"
+            :data="dictChild"
             style="width: 100%"
             :border="true"
             size="mini"
@@ -118,25 +160,29 @@
           >
             <el-table-column
               type="selection"
-              width="55">
-            </el-table-column>
+              width="55"
+            />
             <el-table-column
               prop="name"
               label="值"
-            >
-            </el-table-column>
+            />
             <el-table-column
               prop="code"
               label="代码"
               sortable
-            >
-            </el-table-column>
+            />
           </el-table>
         </el-row>
       </el-col>
     </el-row>
-    <dict-dialog :dict="dictDialog" @closeDict="closeDict" />
-    <dict-child :child="childDialog" @closeChild="closeChild" />
+    <dict-dialog
+      :dict="dictDialog"
+      @closeDict="closeDict"
+    />
+    <dict-child
+      :child="childDialog"
+      @closeChild="closeChild"
+    />
   </div>
 </template>
 <script>
@@ -188,7 +234,7 @@ export default {
   },
   methods: {
     load() {
-      dictList(this.queryParams).then(r => {
+      dictList(this.queryParams).then((r) => {
         this.dict = r.data.records
         this.total = r.data.total
       })
@@ -214,7 +260,7 @@ export default {
         return
       }
       this.currentDict = currentRow
-      dictDetail(currentRow.code).then(res => {
+      dictDetail(currentRow.code).then((res) => {
         this.dictChild = res.data.items
       })
     },
@@ -240,7 +286,7 @@ export default {
         const ids = []
         // 记录code是为了将vuex中的数据删除
         const codes = []
-        this.selections.filter(item => {
+        this.selections.filter((item) => {
           ids.push(item.id)
           codes.push(item.code)
         })
@@ -283,10 +329,10 @@ export default {
     handlerChildDel() {
       myConfirm('确认删除?').then(() => {
         const ids = []
-        this.childSelections.filter(item => {
+        this.childSelections.filter((item) => {
           return ids.push(item.id)
         })
-        deleteDictChild(ids).then(res => {
+        deleteDictChild(ids).then((res) => {
           myMessage()
           // 删除vuex中的该字典
           this.$store.commit('dict/DELETE_ONE_DICT', this.currentDict.code)
@@ -308,5 +354,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

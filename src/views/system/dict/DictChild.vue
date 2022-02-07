@@ -3,18 +3,38 @@
     <el-dialog
       :visible="child.visible"
       :title="child.title"
-      @close="closeChild"
       width="500px"
+      @close="closeChild"
     >
-      <el-form :model="childForm" ref="childForm" :rules="childRules" label-width="80px">
-        <el-form-item label="名称" prop="name">
-          <el-input v-model="childForm.name" clearable />
+      <el-form
+        ref="childForm"
+        :model="childForm"
+        :rules="childRules"
+        label-width="80px"
+      >
+        <el-form-item
+          label="名称"
+          prop="name"
+        >
+          <el-input
+            v-model="childForm.name"
+            clearable
+          />
         </el-form-item>
-        <el-form-item label="编码" prop="code">
-          <el-input v-model="childForm.code" clearable />
+        <el-form-item
+          label="编码"
+          prop="code"
+        >
+          <el-input
+            v-model="childForm.code"
+            clearable
+          />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="submitForm('childForm')">提交</el-button>
+          <el-button
+            type="primary"
+            @click="submitForm('childForm')"
+          >提交</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -28,12 +48,28 @@ export default {
   name: 'DictChild',
   props: {
     child: {
+      type: Object,
+      default: () => ({}),
       visible: false,
       title: null,
       id: 0,
       dictCode: null,
       name: null,
       code: null
+    }
+  },
+  data() {
+    return {
+      childForm: {
+        id: 0,
+        dictCode: null,
+        name: null,
+        code: null
+      },
+      childRules: {
+        name: [{ required: true, message: '请填写名称', trigger: 'blur' }],
+        code: [{ required: true, message: '请填写编码', trigger: 'blur' }]
+      }
     }
   },
   watch: {
@@ -51,25 +87,11 @@ export default {
       deep: true
     }
   },
-  data() {
-    return {
-      childForm: {
-        id: 0,
-        dictCode: null,
-        name: null,
-        code: null
-      },
-      childRules: {
-        name: [{ required: true, message: '请填写名称', trigger: 'blur' }],
-        code: [{ required: true, message: '请填写编码', trigger: 'blur' }]
-      }
-    }
-  },
   methods: {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          saveDictChild(this.childForm).then(res => {
+          saveDictChild(this.childForm).then((res) => {
             myMessage()
             this.$emit('closeChild', true)
           })
@@ -93,5 +115,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

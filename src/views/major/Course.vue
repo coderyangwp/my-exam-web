@@ -1,57 +1,120 @@
 <template>
   <div class="app-container">
-    <el-row :gutter="20" class="search-content">
+    <el-row
+      :gutter="20"
+      class="search-content"
+    >
       <el-col :span="3">
-        <el-input v-model="queryParams.code" placeholder="请输入课程代码" size="small" clearable />
+        <el-input
+          v-model="queryParams.code"
+          placeholder="请输入课程代码"
+          size="small"
+          clearable
+        />
       </el-col>
       <el-col :span="3">
-        <el-input v-model="queryParams.name" placeholder="请输入课程名称" size="small" clearable />
+        <el-input
+          v-model="queryParams.name"
+          placeholder="请输入课程名称"
+          size="small"
+          clearable
+        />
       </el-col>
       <el-col :span="3">
-        <el-select v-model="queryParams.status" size="small" placeholder="请选择课程状态">
+        <el-select
+          v-model="queryParams.status"
+          size="small"
+          placeholder="请选择课程状态"
+        >
           <el-option
             v-for="item in dictStatus"
+            :key="item.id"
             :label="item.name"
             :value="item.code"
-            :key="item.id"
-          >
-          </el-option>
+          />
         </el-select>
       </el-col>
       <el-col :span="4">
-        <el-button icon="el-icon-search" size="small" @click="load">搜索</el-button>
-        <el-button size="small" @click="handlerReset">重置</el-button>
+        <el-button
+          icon="el-icon-search"
+          size="small"
+          @click="load"
+        >搜索</el-button>
+        <el-button
+          size="small"
+          @click="handlerReset"
+        >重置</el-button>
       </el-col>
     </el-row>
     <el-row class="search-content">
-      <el-button type="primary" size="small" icon="el-icon-plus" @click="handlerAdd">添加</el-button>
-      <el-button type="success" size="small" icon="el-icon-edit" :disabled="selections.length !== 1" @click="handlerEdit(selections[0])">修改</el-button>
-      <el-button type="danger" size="small" icon="el-icon-delete" :disabled="selections.length === 0" @click="handlerDel(selections)">删除</el-button>
+      <el-button
+        type="primary"
+        size="small"
+        icon="el-icon-plus"
+        @click="handlerAdd"
+      >添加</el-button>
+      <el-button
+        type="success"
+        size="small"
+        icon="el-icon-edit"
+        :disabled="selections.length !== 1"
+        @click="handlerEdit(selections[0])"
+      >修改</el-button>
+      <el-button
+        type="danger"
+        size="small"
+        icon="el-icon-delete"
+        :disabled="selections.length === 0"
+        @click="handlerDel(selections)"
+      >删除</el-button>
     </el-row>
     <el-row>
       <el-table
+        v-loading="loading"
         :data="courseData"
         border
         :header-cell-style="{'text-align':'center'}"
         :cell-style="{'text-align':'center'}"
-        v-loading="loading"
         @selection-change="select"
       >
         <el-table-column type="selection" />
-        <el-table-column prop="code" label="课程代码" />
-        <el-table-column prop="name" label="课程名称" />
-        <el-table-column prop="score" label="课程学分" />
-        <el-table-column prop="status" label="课程状态">
+        <el-table-column
+          prop="code"
+          label="课程代码"
+        />
+        <el-table-column
+          prop="name"
+          label="课程名称"
+        />
+        <el-table-column
+          prop="score"
+          label="课程学分"
+        />
+        <el-table-column
+          prop="status"
+          label="课程状态"
+        >
           <template slot-scope="scope">
             <el-tag
               :type="scope.row.status === 0 ? 'danger' : 'success'"
-              disable-transitions>{{scope.row.status === 0 ? '未启用' : '启用'}}</el-tag>
+              disable-transitions
+            >{{ scope.row.status === 0 ? '未启用' : '启用' }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="primary" size="mini" icon="el-icon-edit" @click="handlerEdit(scope.row)"></el-button>
-            <el-button type="danger" size="mini" icon="el-icon-delete" @click="handlerDel(scope.row)"></el-button>
+            <el-button
+              type="primary"
+              size="mini"
+              icon="el-icon-edit"
+              @click="handlerEdit(scope.row)"
+            />
+            <el-button
+              type="danger"
+              size="mini"
+              icon="el-icon-delete"
+              @click="handlerDel(scope.row)"
+            />
           </template>
         </el-table-column>
       </el-table>
@@ -65,14 +128,18 @@
           :total="total"
           :page-size="queryParams.size"
           :current-page="queryParams.current"
-          @current-change="handleCurrentChange">
+          @current-change="handleCurrentChange"
+        >
           <template slot="total">
             总数
           </template>
         </el-pagination>
       </el-col>
     </el-row>
-    <course-dialog :dialog="dialog" @closeDialog="closeDialog" />
+    <course-dialog
+      :dialog="dialog"
+      @closeDialog="closeDialog"
+    />
   </div>
 </template>
 
@@ -109,14 +176,14 @@ export default {
     }
   },
   created() {
-    dict('enable').then(res => {
+    dict('enable').then((res) => {
       this.dictStatus = res
     })
     this.load()
   },
   methods: {
     load() {
-      courseList(this.queryParams).then(res => {
+      courseList(this.queryParams).then((res) => {
         this.courseData = res.data.records
         this.queryParams.size = res.data.size
         this.queryParams.current = res.data.current
@@ -148,7 +215,7 @@ export default {
     handlerDel(data) {
       const ids = []
       if (Object.prototype.toString.call(data) === '[object Array]') {
-        data.forEach(item => ids.push(item.id))
+        data.forEach((item) => ids.push(item.id))
       } else {
         ids.push(data.id)
       }
@@ -170,5 +237,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

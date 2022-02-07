@@ -3,29 +3,64 @@
     <el-dialog
       :visible="dict.visible"
       :title="dict.title"
-      @close="handlerClose"
       width="600px"
+      @close="handlerClose"
     >
-      <el-form :model="dictForm" ref="dictForm" :rules="dictRules" label-width="80px" >
-        <el-form-item label="字典名称" prop="name">
-          <el-input v-model="dictForm.name" clearable />
+      <el-form
+        ref="dictForm"
+        :model="dictForm"
+        :rules="dictRules"
+        label-width="80px"
+      >
+        <el-form-item
+          label="字典名称"
+          prop="name"
+        >
+          <el-input
+            v-model="dictForm.name"
+            clearable
+          />
         </el-form-item>
-        <el-form-item label="字典编码" prop="code">
-          <el-tooltip :disabled="dict.id==0" content="使用编辑功能时字典编码无法修改" placement="top" effect="light">
-            <el-input v-model="dictForm.code" clearable :disabled="dict.id>0" />
+        <el-form-item
+          label="字典编码"
+          prop="code"
+        >
+          <el-tooltip
+            :disabled="dict.id==0"
+            content="使用编辑功能时字典编码无法修改"
+            placement="top"
+            effect="light"
+          >
+            <el-input
+              v-model="dictForm.code"
+              clearable
+              :disabled="dict.id>0"
+            />
           </el-tooltip>
         </el-form-item>
-        <el-form-item label="字典描述" prop="descript">
-          <el-input v-model="dictForm.descript" clearable />
+        <el-form-item
+          label="字典描述"
+          prop="descript"
+        >
+          <el-input
+            v-model="dictForm.descript"
+            clearable
+          />
         </el-form-item>
-        <el-form-item label="字典状态" prop="status">
+        <el-form-item
+          label="字典状态"
+          prop="status"
+        >
           <el-radio-group v-model="dictForm.status">
-            <el-radio :label=1>正常</el-radio>
-            <el-radio :label=0>冻结</el-radio>
+            <el-radio :label="1">正常</el-radio>
+            <el-radio :label="0">冻结</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="submitForm('dictForm')">提交</el-button>
+          <el-button
+            type="primary"
+            @click="submitForm('dictForm')"
+          >提交</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -39,6 +74,8 @@ export default {
   name: 'DictDialog',
   props: {
     dict: {
+      type: Object,
+      default: () => ({}),
       visible: {
         type: Boolean,
         default: false
@@ -52,20 +89,6 @@ export default {
       code: null,
       descript: null,
       status: null
-    }
-  },
-  watch: {
-    dict: {
-      handler(data) {
-        if (data.visible && data.id > 0) {
-          // 深拷贝 防止data变化导致props变化
-          this.dictForm = JSON.parse(JSON.stringify(data))
-          // 删除多余属性
-          delete this.dictForm.title
-          delete this.dictForm.visible
-        }
-      },
-      deep: true
     }
   },
   data() {
@@ -84,11 +107,25 @@ export default {
       }
     }
   },
+  watch: {
+    dict: {
+      handler(data) {
+        if (data.visible && data.id > 0) {
+          // 深拷贝 防止data变化导致props变化
+          this.dictForm = JSON.parse(JSON.stringify(data))
+          // 删除多余属性
+          delete this.dictForm.title
+          delete this.dictForm.visible
+        }
+      },
+      deep: true
+    }
+  },
   methods: {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          saveDict(this.dictForm).then(res => {
+          saveDict(this.dictForm).then((res) => {
             myMessage()
             this.resetForm('dictForm')
             this.$emit('closeDict', true)
@@ -111,5 +148,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

@@ -1,34 +1,67 @@
 <template>
   <div>
     <el-dialog
+      v-if="visible"
       :title="title"
       :visible="visible"
-      v-if="visible"
       @close="handlerClose"
     >
-      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="专业名称" prop="name">
-          <el-input v-model="ruleForm.name" clearable></el-input>
+      <el-form
+        ref="ruleForm"
+        :model="ruleForm"
+        :rules="rules"
+        label-width="100px"
+        class="demo-ruleForm"
+      >
+        <el-form-item
+          label="专业名称"
+          prop="name"
+        >
+          <el-input
+            v-model="ruleForm.name"
+            clearable
+          />
         </el-form-item>
-        <el-form-item label="专业代码" prop="code">
-          <el-tooltip :disabled="id==0" content="使用编辑功能时专业代码无法修改" placement="top" effect="light">
-            <el-input v-model="ruleForm.code" :disabled="id>0" clearable></el-input>
+        <el-form-item
+          label="专业代码"
+          prop="code"
+        >
+          <el-tooltip
+            :disabled="id==0"
+            content="使用编辑功能时专业代码无法修改"
+            placement="top"
+            effect="light"
+          >
+            <el-input
+              v-model="ruleForm.code"
+              :disabled="id>0"
+              clearable
+            />
           </el-tooltip>
         </el-form-item>
-        <el-form-item label="专业层次" prop="level">
+        <el-form-item
+          label="专业层次"
+          prop="level"
+        >
           <el-radio-group v-model="ruleForm.level">
             <el-radio :label="5">本科</el-radio>
             <el-radio :label="6">专科</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="专业状态" prop="status">
+        <el-form-item
+          label="专业状态"
+          prop="status"
+        >
           <el-radio-group v-model="ruleForm.status">
-            <el-radio :label=1>启用</el-radio>
-            <el-radio :label=0>不启用</el-radio>
+            <el-radio :label="1">启用</el-radio>
+            <el-radio :label="0">不启用</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+          <el-button
+            type="primary"
+            @click="submitForm('ruleForm')"
+          >提交</el-button>
           <el-button @click="resetForm('ruleForm')">重置</el-button>
         </el-form-item>
       </el-form>
@@ -37,7 +70,7 @@
 </template>
 <script>
 import { addMajor, updateMajor, majorDetail } from '@/api/major'
-import { myMessage, myNotice } from '@/utils/message'
+import { myMessage } from '@/utils/message'
 
 export default {
   name: 'MajorDialog',
@@ -46,8 +79,14 @@ export default {
       type: Number,
       default: 0
     },
-    title: null,
-    visible: null
+    title: {
+      type: String,
+      default: ''
+    },
+    visible: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -59,19 +98,13 @@ export default {
         id: 0
       },
       rules: {
-        name: [
-          { required: true, message: '请输入专业名称', trigger: 'blur' }
-        ],
+        name: [{ required: true, message: '请输入专业名称', trigger: 'blur' }],
         code: [
           { required: true, message: '请输入专业代码', trigger: 'change' },
           { min: 6, max: 6, message: '专业代码长度为6', trigger: 'blur' }
         ],
-        level: [
-          { required: true, message: '请选择专业层次', trigger: 'blur' }
-        ],
-        status: [
-          { required: true, message: '请选择专业状态', trigger: 'blur' }
-        ]
+        level: [{ required: true, message: '请选择专业层次', trigger: 'blur' }],
+        status: [{ required: true, message: '请选择专业状态', trigger: 'blur' }]
       }
     }
   },
@@ -85,7 +118,7 @@ export default {
   },
   methods: {
     init() {
-      majorDetail(this.id).then(res => {
+      majorDetail(this.id).then((res) => {
         this.ruleForm = res.data
       })
     },
@@ -93,13 +126,13 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (this.ruleForm.id === 0) {
-            addMajor(this.ruleForm).then(response => {
+            addMajor(this.ruleForm).then((response) => {
               myMessage()
               this.$emit('finishSave')
               this.resetForm('ruleForm')
             })
           } else {
-            updateMajor(this.ruleForm).then(response => {
+            updateMajor(this.ruleForm).then((response) => {
               myMessage()
               this.$emit('finishSave')
               this.resetForm('ruleForm')

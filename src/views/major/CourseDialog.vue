@@ -5,26 +5,62 @@
       :visible="dialog.visible"
       @close="handlerClose(false)"
     >
-      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="课程名称" prop="name">
-          <el-input v-model="ruleForm.name" clearable></el-input>
+      <el-form
+        ref="ruleForm"
+        :model="ruleForm"
+        :rules="rules"
+        label-width="100px"
+        class="demo-ruleForm"
+      >
+        <el-form-item
+          label="课程名称"
+          prop="name"
+        >
+          <el-input
+            v-model="ruleForm.name"
+            clearable
+          />
         </el-form-item>
-        <el-form-item label="课程代码" prop="code">
-          <el-tooltip :disabled="dialog.id === 0" content="使用编辑功能时专业代码无法修改" placement="top" effect="light">
-            <el-input v-model="ruleForm.code" :disabled="dialog.id>0" clearable></el-input>
+        <el-form-item
+          label="课程代码"
+          prop="code"
+        >
+          <el-tooltip
+            :disabled="dialog.id === 0"
+            content="使用编辑功能时专业代码无法修改"
+            placement="top"
+            effect="light"
+          >
+            <el-input
+              v-model="ruleForm.code"
+              :disabled="dialog.id>0"
+              clearable
+            />
           </el-tooltip>
         </el-form-item>
-        <el-form-item label="学分" prop="score">
-          <el-input v-model="ruleForm.score" clearable></el-input>
+        <el-form-item
+          label="学分"
+          prop="score"
+        >
+          <el-input
+            v-model="ruleForm.score"
+            clearable
+          />
         </el-form-item>
-        <el-form-item label="课程状态" prop="status">
+        <el-form-item
+          label="课程状态"
+          prop="status"
+        >
           <el-radio-group v-model="ruleForm.status">
-            <el-radio :label=1>启用</el-radio>
-            <el-radio :label=0>不启用</el-radio>
+            <el-radio :label="1">启用</el-radio>
+            <el-radio :label="0">不启用</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+          <el-button
+            type="primary"
+            @click="submitForm('ruleForm')"
+          >提交</el-button>
           <el-button @click="resetForm('ruleForm')">重置</el-button>
         </el-form-item>
       </el-form>
@@ -39,16 +75,36 @@ export default {
   name: 'CourseDialog',
   props: {
     dialog: {
+      type: Object,
+      default: () => ({}),
       id: {
         type: Number,
         default: 0
       },
-      title: null,
-      visible: null,
-      name: null,
-      code: null,
-      score: null,
-      status: null
+      title: {
+        type: String,
+        default: ''
+      },
+      visible: {
+        type: Boolean,
+        default: false
+      },
+      name: {
+        type: String,
+        default: ''
+      },
+      code: {
+        type: Boolean,
+        default: false
+      },
+      score: {
+        type: Boolean,
+        default: false
+      },
+      status: {
+        type: Boolean,
+        default: false
+      }
     }
   },
   data() {
@@ -61,19 +117,13 @@ export default {
         id: 0
       },
       rules: {
-        name: [
-          { required: true, message: '请输入课程名称', trigger: 'blur' }
-        ],
+        name: [{ required: true, message: '请输入课程名称', trigger: 'blur' }],
         code: [
           { required: true, message: '请输入课程代码', trigger: 'change' },
           { min: 5, max: 5, message: '课程代码长度为5', trigger: 'blur' }
         ],
-        level: [
-          { required: true, message: '请选择课程学分', trigger: 'blur' }
-        ],
-        status: [
-          { required: true, message: '请选择课程状态', trigger: 'blur' }
-        ]
+        level: [{ required: true, message: '请选择课程学分', trigger: 'blur' }],
+        status: [{ required: true, message: '请选择课程状态', trigger: 'blur' }]
       }
     }
   },
@@ -91,7 +141,7 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          saveCourse(this.ruleForm).then(response => {
+          saveCourse(this.ruleForm).then((response) => {
             myMessage()
             this.handlerClose(true)
           })

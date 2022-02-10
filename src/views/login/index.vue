@@ -14,7 +14,7 @@
       >
         <h3 class="title">考试管理系统</h3>
       </div>
-      <el-form-item prop="account">
+      <el-form-item prop="username">
         <el-input
           ref="account"
           v-model="loginForm.username"

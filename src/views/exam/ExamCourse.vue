@@ -87,7 +87,7 @@
             <template v-for="course in addCourseList">
               <el-tag
                 v-if="course.show"
-                :key="course.id"
+                :key="course.code"
                 closable
                 @close="handlerCloseTag(course)"
               >
@@ -103,6 +103,7 @@
       >
         <el-button
           type="primary"
+          :loading="buttonLoading"
           @click="submitForm"
         >确 定</el-button>
       </span>
@@ -112,6 +113,8 @@
 
 <script>
 import { courseList } from '@/api/major.js'
+import { saveExamCourse, loadArrangeCourse } from '@/api/exam.js'
+import { myMessage } from '@/utils/message.js'
 
 export default {
   name: 'ExamCourse',
@@ -127,6 +130,10 @@ export default {
         type: Boolean,
         default: false
       },
+      examId: {
+        type: Number,
+        default: 0
+      },
       examArrangeId: {
         type: Number,
         default: 0
@@ -135,6 +142,7 @@ export default {
   },
   data() {
     return {
+      buttonLoading: false,
       courseList: [], // 搜索的科目
       selections: [], // 勾选的科目
       addCourseList: [], // 添加的科目
@@ -149,14 +157,42 @@ export default {
       searchCode: null // 从已添加科目中搜索
     }
   },
+  computed: {
+    visible() {
+      return this.courseInfo.visible
+    }
+  },
   watch: {
     searchCode() {
       this.resetMyCourseStatus()
       this.handlerSearchMyCourse()
+    },
+    visible(data) {
+      if (data) {
+        this.loadCourse()
+      }
     }
   },
   // 方法集合
   methods: {
+    loadCourse() {
+      const dto = {}
+      dto.examId = this.courseInfo.examId
+      dto.examArrangeId = this.courseInfo.examArrangeId
+      loadArrangeCourse(dto).then((r) => {
+        if (r.data.length > 0) {
+          r.data.forEach((data) => {
+            this.addCourseList.push({
+              examId: data.examId,
+              examArrangeId: data.examArrangeId,
+              name: data.name,
+              code: data.code,
+              show: true
+            })
+          })
+        }
+      })
+    },
     handlerSearch() {
       if (this.queryParams.name && this.queryParams.name.trim() !== '') {
         if (/^\d+$/.test(this.queryParams.name)) {
@@ -182,11 +218,12 @@ export default {
     handlerAdd() {
       this.selections.forEach((item) => {
         const index = this.addCourseList.findIndex(
-          (course) => course.id === item.id
+          (course) => course.code === item.code
         )
         if (index === -1) {
           this.addCourseList.push({
-            id: item.id,
+            examId: this.courseInfo.examId,
+            examArrangeId: this.courseInfo.examArrangeId,
             name: item.name,
             code: item.code,
             show: true
@@ -225,7 +262,18 @@ export default {
         })
       }
     },
-    submitForm() {},
+    submitForm() {
+      if (this.addCourseList.length === 0) {
+        myMessage('warning', '请添加科目')
+        return
+      }
+      this.buttonLoading = true
+      saveExamCourse(this.addCourseList).then((r) => {
+        myMessage()
+        this.handleClose(true)
+        this.buttonLoading = false
+      })
+    },
     handleClose(reload) {
       // 不使用resetFields方法，因为对于数组元素无法清空
       Object.assign(this.$data, this.$options.data())
@@ -237,13 +285,13 @@ export default {
 
 <style scoped>
 .exam-course-content {
-  height: 490px;
+  height: 510px;
 }
 .exam-course-content .el-col-12 {
   height: 100%;
   overflow: auto;
 }
-/deep/.exam-course-table .el-table__cell {
+::v-deep .exam-course-table td {
   padding: 6px 0;
   font-size: 12px;
 }

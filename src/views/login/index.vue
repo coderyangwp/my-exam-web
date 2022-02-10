@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import { captcha } from '@/api/user'
+import { captcha } from '@/api/user.js'
 
 export default {
   name: 'Login',

@@ -217,7 +217,7 @@
 </template>
 
 <script>
-import { examList, delExam, loadExamCourse } from '@/api/exam.js'
+import { examList, delExam, loadExamCourse } from '@/api/exam'
 import { dict } from '@/utils/dict'
 import { myMessage, myConfirm } from '@/utils/message'
 import { formatDates } from '@/utils/date.js'

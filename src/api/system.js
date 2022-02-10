@@ -52,8 +52,8 @@ export function saveDictChild(dictDetail) {
 }
 /**
  * 删除字典
- * @param ids 
- * @returns 
+ * @param ids
+ * @returns
  */
 export function delDict(ids) {
   return request({
@@ -63,8 +63,8 @@ export function delDict(ids) {
 }
 /**
  * 删除字典数据
- * @param ids 
- * @returns 
+ * @param ids
+ * @returns
  */
 export function deleteDictChild(ids) {
   return request({

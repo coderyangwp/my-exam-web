@@ -153,7 +153,29 @@ export const constantRoutes = [
       }
     ]
   },
+  {
+    path: '/sys-tool',
+    name: 'SysTool',
+    component: Layout,
+    meta: { title: '系统工具', icon: 'el-icon-s-cooperation' },
+    alwaysShow: true,
+    children: [
+      {
+        path: 'generator',
+        name: 'Generator',
+        component: () => import('@/views/systool/generator/index'),
+        meta: { title: '代码生成', icon: 'el-icon-s-claim' }
+      },
+      {
+        path: 'generator/config/:tableName',
+        name: 'Config',
+        component: () => import('@/views/systool/generator/ColumnConfig'),
+        meta: { title: '生成配置', icon: 'el-icon-more' },
+        hidden: true
+      }
 
+    ]
+  },
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]

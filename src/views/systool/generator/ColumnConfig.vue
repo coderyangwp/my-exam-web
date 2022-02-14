@@ -3,7 +3,7 @@
     <el-card class="generator-card">
       <div slot="header" class="clearfix">
         <span class="card-title">表字段配置: {{ tableName }}</span>
-        <el-button type="warning" icon="el-icon-folder-checked" size="mini">保存并生成</el-button>
+        <el-button type="warning" icon="el-icon-folder-checked" size="mini" @click="genCode">生成</el-button>
         <el-button type="success" icon="el-icon-check" size="mini" :loading="saveLoading" @click="saveColumn">保存
         </el-button>
         <el-button type="primary" icon="el-icon-refresh" size="mini" :loading="syncLoading" @click="load">同步</el-button>
@@ -52,17 +52,45 @@
     <el-card class="generator-card">
       <div slot="header" class="clearfix">
         <span class="card-title">生成配置</span>
-        <el-button type="warning" icon="el-icon-folder-checked" size="mini" :loading="configLoading">保存</el-button>
+        <el-button type="success" icon="el-icon-folder-checked" size="mini" :loading="configLoading"
+          @click="saveConfig('configForm')">保存</el-button>
       </div>
-      <el-form size="small">
-
+      <el-form size="small" :model="configForm" ref="configForm" :rules="configRules" class="table-config-form"
+        label-width="140px">
+        <el-form-item label="作者" prop="author" required>
+          <el-input v-model="configForm.author" clearable></el-input>
+        </el-form-item>
+        <el-form-item label="模块名称" prop="moduleName" required>
+          <el-input v-model="configForm.moduleName" clearable></el-input>
+        </el-form-item>
+        <el-form-item label="置于哪个包下" prop="pack" required>
+          <el-input v-model="configForm.pack" clearable></el-input>
+        </el-form-item>
+        <el-form-item label="前端代码生成路径" prop="path" required>
+          <el-input v-model="configForm.path" clearable></el-input>
+        </el-form-item>
+        <el-form-item label="前端api文件路径" prop="apiPath" required>
+          <el-input v-model="configForm.apiPath" clearable></el-input>
+        </el-form-item>
+        <el-form-item label="表前缀" prop="prefix" required>
+          <el-input v-model="configForm.prefix" clearable></el-input>
+        </el-form-item>
+        <el-form-item label="接口名称" prop="apiAlias" required>
+          <el-input v-model="configForm.apiAlias" clearable></el-input>
+        </el-form-item>
+        <el-form-item label="是否覆盖" prop="cover" required>
+          <el-radio-group v-model="configForm.cover">
+            <el-radio-button label="1">覆盖</el-radio-button>
+            <el-radio-button label="0">不覆盖</el-radio-button>
+          </el-radio-group>
+        </el-form-item>
       </el-form>
     </el-card>
   </div>
 </template>
 
 <script>
-  import { columnList, saveColumn } from '@/api/systool'
+  import { columnList, saveColumn, saveConfig, tableConfig, genCode } from '@/api/systool'
   import { dictAll } from '@/api/system'
   import { myMessage } from '@/utils/message'
 
@@ -97,7 +125,20 @@
             value: 'Date',
             label: '日期框'
           }
-        ]
+        ],
+        configForm: {
+          id: 0,
+          tableName: null,
+          author: null,
+          cover: 1,
+          moduleName: null,
+          pack: null,
+          path: null,
+          apiPath: null,
+          prefix: null,
+          apiAlias: null
+        },
+        configRules: {}
       }
     },
     computed: {
@@ -108,6 +149,7 @@
     created() {
       this.load()
       this.dict()
+      this.tableConfig()
     },
     methods: {
       load() {
@@ -124,16 +166,40 @@
           this.dictOptions = r.data
         })
       },
+      tableConfig() {
+        tableConfig(this.tableName).then(r => {
+          if (r.data.tableName !== null) {
+            this.configForm = r.data
+          }
+        })
+      },
       saveColumn() {
         this.saveLoading = true
         this.columnList.forEach((item) => {
           item.tableName = this.tableName
         })
-        console.log(this.columnList)
         saveColumn(this.columnList).then((r) => {
           myMessage()
           this.saveLoading = false
           this.load()
+        })
+      },
+      saveConfig(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            this.configForm.tableName = this.tableName
+            saveConfig(this.configForm).then(r => {
+              myMessage()
+            })
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+      },
+      genCode() {
+        genCode(this.tableName).then(r => {
+
         })
       }
     }
@@ -153,5 +219,9 @@
   .clearfix .el-button {
     float: right;
     margin: 0 3px;
+  }
+
+  .table-config-form .el-input {
+    width: 40%;
   }
 </style>

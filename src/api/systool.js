@@ -35,3 +35,37 @@ export function saveColumn(data) {
     data: data
   })
 }
+/**
+ * 维护表代码生成配置信息
+ * @param {*} data
+ * @returns
+ */
+export function saveConfig(data) {
+  return request({
+    url: '/generator/saveConfig',
+    method: 'post',
+    data: data
+  })
+}
+/**
+ * 获取表配置信息
+ * @param {*} tableName
+ * @returns
+ */
+export function tableConfig(tableName) {
+  return request({
+    url: '/generator/config/' + tableName,
+    method: 'get'
+  })
+}
+/**
+ * 代码生成
+ * @param {*} tableName
+ * @returns
+ */
+export function genCode(tableName) {
+  return request({
+    url: '/generator/code/' + tableName,
+    method: 'get'
+  })
+}

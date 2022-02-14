@@ -72,3 +72,10 @@ export function deleteDictChild(ids) {
     method: 'get'
   })
 }
+
+export function dictAll() {
+  return request({
+    url: '/dict/listAll',
+    method: 'get'
+  })
+}

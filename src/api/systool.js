@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import { formatDates } from '@/utils/date'
 
 /**
  * 获取当前数据库所有表
@@ -68,4 +69,28 @@ export function genCode(tableName) {
     url: '/generator/code/' + tableName,
     method: 'get'
   })
+}
+/**
+ * 下载代码
+ * @param {*} tableName
+ * @returns
+ */
+export function downLoad(tableName) {
+  return request({
+    url: 'generator/download/' + tableName,
+    method: 'get'
+  })
+}
+
+// 下载文件
+export function downloadFile(obj, name, suffix) {
+  const url = window.URL.createObjectURL(new Blob([obj]))
+  const link = document.createElement('a')
+  link.style.display = 'none'
+  link.href = url
+  const fileName = formatDates(new Date(), 'yyyy-MM-dd') + '-' + name + '.' + suffix
+  link.setAttribute('download', fileName)
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
 }

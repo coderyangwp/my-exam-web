@@ -71,14 +71,15 @@ export function genCode(tableName) {
   })
 }
 /**
- * 下载代码
+ * 生成代码压缩包
  * @param {*} tableName
  * @returns
  */
-export function downLoad(tableName) {
+export function packageFile(tableName) {
   return request({
     url: 'generator/download/' + tableName,
-    method: 'get'
+    method: 'post',
+    responseType: 'blob'
   })
 }
 
@@ -93,4 +94,11 @@ export function downloadFile(obj, name, suffix) {
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)
+}
+
+export function preview(tableName) {
+  return request({
+    url: '/generator/preview/' + tableName,
+    method: 'get'
+  })
 }

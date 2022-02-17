@@ -172,8 +172,14 @@ export const constantRoutes = [
         component: () => import('@/views/systool/generator/ColumnConfig'),
         meta: { title: '生成配置', icon: 'el-icon-more' },
         hidden: true
+      },
+      {
+        path: 'generator/preview/:tableName',
+        name: 'Preview',
+        component: () => import('@/views/systool/generator/Preview'),
+        meta: { title: '代码预览', icon: 'el-icon-view' },
+        hidden: true
       }
-
     ]
   },
   // 404 page must be placed at the end !!!

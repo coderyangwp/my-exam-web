@@ -95,10 +95,14 @@ export function downloadFile(obj, name, suffix) {
   link.click()
   document.body.removeChild(link)
 }
-
+/**
+ * 代码预览
+ * @param {*} tableName
+ * @returns
+ */
 export function preview(tableName) {
   return request({
     url: '/generator/preview/' + tableName,
-    method: 'get'
+    method: 'post'
   })
 }

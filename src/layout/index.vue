@@ -1,8 +1,18 @@
 <template>
-  <div :class="classObj" class="app-wrapper">
-    <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside" />
+  <div
+    :class="classObj"
+    class="app-wrapper"
+  >
+    <div
+      v-if="device==='mobile'&&sidebar.opened"
+      class="drawer-bg"
+      @click="handleClickOutside"
+    />
     <sidebar class="sidebar-container" />
-    <div :class="{hasTagsView:needTagsView}" class="main-container">
+    <div
+      :class="{'hasTagsView':needTagsView}"
+      class="main-container"
+    >
       <div :class="{'fixed-header':fixedHeader}">
         <navbar />
         <tags-view v-if="needTagsView" />
@@ -28,10 +38,10 @@ export default {
   mixins: [ResizeMixin],
   computed: {
     ...mapState({
-      sidebar: state => state.app.sidebar,
-      device: state => state.app.device,
-      fixedHeader: state => state.settings.fixedHeader,
-      needTagsView: state => state.settings.tagsView
+      sidebar: (state) => state.app.sidebar,
+      device: (state) => state.app.device,
+      fixedHeader: (state) => state.settings.fixedHeader,
+      needTagsView: (state) => state.settings.tagsView
     }),
     classObj() {
       return {
@@ -51,5 +61,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+.fixed-header {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 9;
+  width: calc(100% - 205px);
+  padding: 0;
+}
+.hasTagsView .app-main {
+  padding-top: 84px;
+}
 </style>

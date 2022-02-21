@@ -59,7 +59,10 @@
                 type="text"
                 @click="downloadCode(scope.row.tableName)"
               >下载</el-button>
-              <el-button type="text">生成</el-button>
+              <el-button
+                type="text"
+                @click="genCode(scope.row.tgableName)"
+              >生成</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -80,7 +83,13 @@
 </template>
 
 <script>
-import { tableList, packageFile, downloadFile } from '@/api/systool'
+import {
+  tableList,
+  packageFile,
+  downloadFile,
+  checkConfig,
+  genCode
+} from '@/api/systool'
 import { myMessage } from '@/utils/message'
 
 export default {
@@ -118,10 +127,15 @@ export default {
       console.log(tableName)
     },
     downloadCode(tableName) {
-      packageFile(tableName).then((r) => {
-        downloadFile(r, tableName, 'zip')
-        myMessage()
+      checkConfig(tableName).then((r) => {
+        packageFile(tableName).then((r) => {
+          downloadFile(r, tableName, 'zip')
+          myMessage()
+        })
       })
+    },
+    genCode(tableName) {
+      genCode(tableName).then((r) => {})
     }
   }
 }

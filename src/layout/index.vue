@@ -61,12 +61,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.fixed-header {
+.openSidebar .fixed-header {
   position: fixed;
   top: 0;
   right: 0;
   z-index: 9;
   width: calc(100% - 205px);
+  padding: 0;
+}
+.hideSidebar .fixed-header {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 9;
+  width: calc(100% - 50px);
   padding: 0;
 }
 .hasTagsView .app-main {

@@ -67,7 +67,7 @@ export function tableConfig(tableName) {
 export function genCode(tableName) {
   return request({
     url: '/generator/code/' + tableName,
-    method: 'get'
+    method: 'post'
   })
 }
 /**
@@ -104,5 +104,16 @@ export function preview(tableName) {
   return request({
     url: '/generator/preview/' + tableName,
     method: 'post'
+  })
+}
+/**
+ * 判断表是否已完成代码生成配置
+ * @param {*} tableName
+ * @returns
+ */
+export function checkConfig(tableName) {
+  return request({
+    url: '/generator/checkConfig/' + tableName,
+    method: 'get'
   })
 }
